@@ -46,7 +46,7 @@ def train_classifier(
             val_score
     """
     if verbose >= 1:
-        print(f"Training model for {epochs} epochs. Early stopping{'' if early_stopping is None else ' not'} enabled.")
+        print(f"Training model for {epochs} epochs. Early stopping{' not' if early_stopping is None else ''} enabled.")
     history = {
         'epochs': [],
         'train_loss': [],
