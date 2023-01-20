@@ -18,6 +18,18 @@ def make_dataloader(
     batch_size: int,
     shuffle: bool = False
 ) -> DataLoader:
+    """
+    Makes a torch DataLoader object from the given data.
+
+    Args:
+        X, y (iterables): Data and labels to be converted into DataLoader format.
+        batch_size (int): batch size of the DataLoader.
+        shuffle (bool, optional): whether to shuffle the data when creating the DataLoader.
+            Defaults to False.
+    
+    Returns:
+        torch.utils.data.DataLoader object containing len(X) (=len(y)) / batch_size batches of size batch_size from X and y.
+    """
     return DataLoader(
         CustomDataset(X, y),
         batch_size=batch_size,
@@ -82,6 +94,9 @@ class EarlyStopping():
         return False
 
 def plot_train_history(history):
+    """
+    Plots loss and metric score curves for training and validation using the history object returned by training function.
+    """
     plt.figure(figsize=(12, 6))
 
     plt.subplot(121)
