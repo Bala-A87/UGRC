@@ -14,4 +14,4 @@ class BinaryAccuracy(torch.nn.Module):
     
     def forward(self, preds, y):
         preds_class = torch.round(preds)
-        return torch.sum(preds_class == y)/len(y)
+        return torch.tensor(torch.sum(preds_class == y)/len(y))

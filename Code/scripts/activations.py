@@ -59,3 +59,23 @@ class Sq(torch.nn.Module):
     
     def forward(self, x):
         return sq(x)
+
+def sinoverx(x):
+    return torch.sin(x)/x
+
+class SinOverx(torch.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+    
+    def forward(self, x):
+        return sinoverx(x)
+    
+def oneNegMod(x):
+    return 1-torch.abs(x)
+
+class OneNegMod(torch.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def forward(self, x):
+        return oneNegMod(x)         

@@ -2,7 +2,7 @@ import torch
 from typing import Dict, List
 from scripts.utils import EarlyStopping
 
-def train_classifier(
+def train_model(
     model: torch.nn.Module,
     train_dataloader: torch.utils.data.DataLoader,
     val_dataloader: torch.utils.data.DataLoader,
@@ -15,7 +15,7 @@ def train_classifier(
     device: torch.device = 'cpu'
 ) -> Dict[str, List[float]]:
     """
-    Trains a torch NN classifier (binary) with the provided arguments.
+    Trains a torch NN model with the provided arguments.
 
     Args:
         model (torch.nn.Module): The model to train.
