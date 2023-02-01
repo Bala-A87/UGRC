@@ -86,10 +86,10 @@ def train_model(
             val_score /= len(val_dataloader)
 
         history['epochs'].append(epoch+1)
-        history['train_loss'].append(train_loss.item())
-        history['train_score'].append(train_score)
-        history['val_loss'].append(val_loss.item())
-        history['val_score'].append(val_score)
+        history['train_loss'].append(train_loss.detach().cpu().numpy())
+        history['train_score'].append(train_score.detach().cpu().numpy())
+        history['val_loss'].append(val_loss.detach().cpu().numpy())
+        history['val_score'].append(val_score.detach().cpu().numpy())
 
         if verbose >= 2:
             print(f'Epoch: {epoch+1} => Train loss: {train_loss:.6f}, Train score: {train_score:.6f}, Val loss: {val_loss:.6f}, Val score: {val_score:.6f}')
