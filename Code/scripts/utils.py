@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
+from scipy.stats import pearsonr
 
 class CustomDataset(Dataset):
     def __init__(self, data, labels) -> None:
@@ -109,6 +110,20 @@ def plot_train_history(history):
     plt.plot(history['epochs'], history['train_score'], label='Training')
     plt.plot(history['epochs'], history['val_score'], label='Validation')
     plt.title('Score')
+    plt.legend()
+
+    plt.show()
+
+def plot_ntk_corrs(preds_nn, preds_km_init, preds_km_inf):
+    """
+    Plots correlation between predictions of neural network and kernel machines with initial and final (T=0, T=inf) NTKs, with predictions of NN on x-axis and kernel machine predictions on y-axis, along with correlation (pearson's correlation coefficient) in the legend
+    """
+    corr_init, corr_inf = pearsonr(preds_nn.squeeze(), preds_km_init).statistic, pearsonr(preds_nn.squeeze(), preds_km_inf).statistic
+
+    plt.figure(figsize=(8, 8))
+
+    plt.scatter(preds_nn, preds_km_init, c='blue', s=6, label=f'T=0, corr: {corr_init:.3f}')
+    plt.scatter(preds_nn, preds_km_inf, c='orange', s=6, label=f'T=inf, corr: {corr_inf:.3f}')
     plt.legend()
 
     plt.show()
