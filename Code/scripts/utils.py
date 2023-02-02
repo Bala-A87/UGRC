@@ -124,6 +124,8 @@ def plot_ntk_corrs(preds_nn, preds_km_init, preds_km_inf):
 
     plt.scatter(preds_nn, preds_km_init, c='blue', s=6, label=f'T=0, corr: {corr_init:.3f}')
     plt.scatter(preds_nn, preds_km_inf, c='orange', s=6, label=f'T=inf, corr: {corr_inf:.3f}')
+    plt.xlabel('NN preds')
+    plt.ylabel('NTK SVM preds')
     plt.legend()
 
     plt.show()
