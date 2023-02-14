@@ -12,7 +12,8 @@ def train_model(
     epochs: int,
     early_stopping: EarlyStopping = None,
     verbose: int = 2,
-    device: torch.device = 'cpu'
+    device: torch.device = 'cpu',
+    return_models: bool = False
 ) -> Dict[str, List[float]]:
     """
     Trains a torch NN model with the provided arguments.
@@ -34,6 +35,8 @@ def train_model(
             Defaults to 2.
         device (torch.device, optional): Device to train the model on.
             Defaults to cpu.
+        return_models (bool, optional): Whether to return all intermediate and final models as well.
+            Defaults to False.
     
     Returns:
         A history object containing all the training information, in the form of a dict with str keys and values of type list of floats.
@@ -44,6 +47,7 @@ def train_model(
             train_score
             val_loss
             val_score
+            models
     """
     if verbose >= 1:
         print(f"Training model for {epochs} epochs. Early stopping{' not' if early_stopping is None else ''} enabled.")
@@ -52,7 +56,8 @@ def train_model(
         'train_loss': [],
         'train_score': [],
         'val_loss': [],
-        'val_score': []
+        'val_score': [],
+        'models': []
     }
     for epoch in range(epochs):
         train_loss, train_score = 0.0, 0.0
@@ -90,6 +95,10 @@ def train_model(
         history['train_score'].append(train_score.detach().cpu().numpy())
         history['val_loss'].append(val_loss.detach().cpu().numpy())
         history['val_score'].append(val_score.detach().cpu().numpy())
+        if return_models:
+            curr_model = model.__class__(model.hidden_layers, model.hidden_units).to(device) # Be careful with this!!
+            curr_model.load_state_dict(model.state_dict())
+            history['models'].append(curr_model)
 
         if verbose >= 2:
             print(f'Epoch: {epoch+1} => Train loss: {train_loss:.6f}, Train score: {train_score:.6f}, Val loss: {val_loss:.6f}, Val score: {val_score:.6f}')
