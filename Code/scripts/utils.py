@@ -248,4 +248,4 @@ def plot_2d_visualization(
     folder_name = 'animations/' + now.strftime("%d%m%Y_%H%M")
     os.mkdir(folder_name)
 
-    ani.save(folder_name+gif_save_file_name+'.gif', writer=writer)
+    ani.save(folder_name+'/'+gif_save_file_name+'.gif', writer=writer)
