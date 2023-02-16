@@ -1,6 +1,13 @@
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from scipy.stats import pearsonr
+import torch
+from scripts.data.orthants import find_orthant, ORTHANTS, CENTRE, HIGH_COUNT, HIGH_SPREAD
+from matplotlib.animation import FuncAnimation, PillowWriter
+from typing import Tuple, List
+from scripts.test import predict
+from datetime import datetime
+import os
 
 class CustomDataset(Dataset):
     def __init__(self, data, labels) -> None:
@@ -129,3 +136,116 @@ def plot_ntk_corrs(preds_nn, preds_km_init, preds_km_inf):
     plt.legend()
 
     plt.show()
+
+from typing import Tuple
+
+class Project7D_2D():
+    """
+    A class to construct a random 2D subspace in 7D space and find projections onto it.
+
+    Initializes by randomly selecting two 7D vectors and orthonormalizing them, to act as an
+    orthonormal basis for a random 2D subspace.
+    """
+    def __init__(self) -> None:
+        self.v = torch.randn(7, 7)
+        for i in range(7):
+            for j in range(i):
+                proj_ij = torch.dot(self.v[i], self.v[j])
+                self.v[i] -= proj_ij * self.v[j]
+            norm_i = torch.sqrt(torch.dot(self.v[i], self.v[i]))
+            self.v[i] /= norm_i
+    
+    def fix_perp_comps(self, u: torch.Tensor) -> None:
+        """
+        Sets the components along basis vectors of 7D space besides the basis vectors of the 2D subspace
+        to fixed values, to describe a 2D plane, using a given point u.
+
+        Arg:
+            u (torch.Tensor): Special vector in 7D space used to fix the 2D plane, a tensor of shape (7,)
+        """
+        u_projs = torch.tensor([torch.dot(u, self.v[i]) for i in range(7)])
+        self.fixed_comps = u_projs[2:].reshape(1, -1)
+
+    def project(self, u: torch.Tensor) -> torch.Tensor:
+        """
+        Projects a vector in 7D space into the randomly constructed 2D subspace and returns components along
+        the orthonormal basis vectors.
+
+        Arg:
+            u (torch.Tensor): Initial vector in 7D space, a tensor of shape (7,)
+        
+        Returns:
+            A tensor containing the scalar projections of u onto the random orthonormal basis of 7D space,
+            the first two components of which indicate the "free" components, along the plane.
+        """
+        proj_1 = torch.dot(u, self.v[0]).reshape(1, 1)
+        proj_2 = torch.dot(u, self.v[1]).reshape(1, 1)
+        return torch.cat([proj_1, proj_2, self.fixed_comps], dim=1)
+
+def plot_2d_visualization(
+    X_train: torch.Tensor,
+    Y_train: torch.Tensor, # maybe try improving this to only relevant data? not a necessity though ig
+    models: List[torch.nn.Module],
+    gif_save_file_name: str,
+    centre: torch.Tensor = CENTRE,
+    steps: Tuple[int, int] = (50, 50),
+    orthant_min_count: int = 2*(HIGH_COUNT-HIGH_SPREAD),
+    fps: int = 20,
+    device: torch.device = 'cpu'
+) -> None:
+    """
+    Performs a 2D planar visualization for 7D data, to witness evolution of classification boundary over training.
+
+    Args:
+        X_train (torch.Tensor): Training data
+        Y_train (torch.Tensor): Training labels
+        models (list): List of models, one corresponding to each epoch of training, to capture the state during each epoch
+        gif_save_file_name (str): Name of file to save the animation as. Saved in the animations folder, under a directory with the time of saving as name. File name is expected to not contain the folder or the .gif extension
+        centre (torch.Tensor, optional): Baseline point to fix the basis vectors not in the required plane.
+            Defaults to tensor([4., 4., 4., 4., 4., 4., 4.]).
+        steps (tuple, optional): Number of background/illustrative points to plot, expressed as number of samples along
+        either direction of the 2 free basis vectors. Defaults to (50, 50).
+        orthant_min_count (int, optional): Minimum number of points in an orthant required to choose the orthant randomly.
+            Defaults to 34.
+        fps (int, optional): fps rate for the gif. Defaults to 20.
+        device (torch.device, optional): Device on which the model is trained. Defaults to cpu.
+    """
+    count = 0
+    while count < orthant_min_count:
+        random_orthant = int(torch.rand(1) * 127)
+        train_orthants = torch.tensor([find_orthant(x) for x in X_train])
+        X_train_random_orthant = X_train[train_orthants==random_orthant]
+        Y_train_random_orthant = Y_train[train_orthants==random_orthant]
+        count = len(Y_train_random_orthant)
+    projector = Project7D_2D()
+    projector.fix_perp_comps(ORTHANTS[random_orthant] * centre)
+    X_train_random_orthant_proj = torch.cat([projector.project(x) for x in X_train_random_orthant])
+    fig, ax = plt.subplots()
+    plt.scatter(X_train_random_orthant_proj[:, 0], X_train_random_orthant_proj[:, 1], s=20, c=Y_train_random_orthant, cmap='PiYG')
+    xlim = plt.xlim()
+    ylim = plt.ylim()
+    X_grid, Y_grid = torch.meshgrid([
+        torch.linspace(xlim[0], xlim[1], steps[0]),
+        torch.linspace(ylim[0], ylim[1], steps[1])
+    ], indexing='xy')
+    X_all, Y_all = X_grid.reshape(-1, 1), Y_grid.reshape(-1, 1)
+    X_input = torch.matmul(X_all, projector.v[0].unsqueeze(0)) + torch.matmul(Y_all, projector.v[1].unsqueeze(0)) + torch.matmul(projector.fixed_comps, projector.v[2:])
+
+    def animate(i):
+        model = models[i]
+        ax.clear()
+        ax.scatter(X_train_random_orthant_proj[:, 0], X_train_random_orthant_proj[:, 1], s=20, c=Y_train_random_orthant, cmap='PiYG')
+        Z_all = torch.round(predict(model, X_input, device)) 
+        sc = ax.scatter(X_all, Y_all, s=8, c=Z_all, cmap='PiYG', alpha=0.25)
+        ax.set_title('Epoch '+str(i+1))
+        fig.tight_layout()
+        return sc
+    
+    ani = FuncAnimation(fig=fig, func=animate, frames=range(len(models)), interval=50, repeat=True)
+    writer = PillowWriter(fps=fps, metadata=dict(artist='Me'), bitrate=1800)
+
+    now = datetime.now()
+    folder_name = 'animations/' + now.strftime("%d%m%Y_%H%M")
+    os.mkdir(folder_name)
+
+    ani.save(folder_name+gif_save_file_name+'.gif', writer=writer)
