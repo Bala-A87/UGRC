@@ -2,12 +2,13 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from scipy.stats import pearsonr
 import torch
-from scripts.data.orthants import find_orthant, ORTHANTS, CENTRE, HIGH_COUNT, HIGH_SPREAD
-from matplotlib.animation import FuncAnimation, PillowWriter
+from scripts.data.orthants import find_orthant, ORTHANTS, CENTRE, HIGH_COUNT, HIGH_SPREAD, generate_point
+from matplotlib.animation import FuncAnimation, PillowWriter, FFMpegWriter
 from typing import Tuple, List
 from scripts.test import predict
 from datetime import datetime
 import os
+import numpy as np
 
 class CustomDataset(Dataset):
     def __init__(self, data, labels) -> None:
@@ -249,3 +250,86 @@ def plot_2d_visualization(
     os.mkdir(folder_name)
 
     ani.save(folder_name+'/'+gif_save_file_name+'.gif', writer=writer)
+
+def plot_radial_visualization(
+    models: List[torch.nn.Module],
+    mp4_save_file_name: str,
+    orthant_counts: torch.Tensor,
+    num_samples_per_orthant: int = 100,
+    range_start: float = 0.5,
+    range_stop: float = 2.6,
+    range_step: float = 0.1,
+    centre: torch.Tensor = CENTRE,
+    nrows: int = 2,
+    ncols: int = 4,
+    fps: int = 20,
+    device: torch.device = 'cpu'
+) -> None:
+    """
+    Plots a visualization of the variation of the probability of class 1 with radius of the sphere, in a random orthant
+    and its surrounding 7 neighbors, evolving with training.
+
+    Args:
+        models (list): List of models, one corresponding to each epoch of training, to capture the state during each epoch
+        mp4_save_file_name (str): Name of the file to save the generated animation in, as an mp4 file. Saved in 
+        animations folder under a subfolder corresponding to the time of video file creation. Only the file name is
+        expected, without any directories or extension.
+        orthant_counts (torch.Tensor): Number of data points used for training in each orthant.
+            Tensor of shape (128,).
+        num_samples_per_orthant (int, optional): The number of data points to use to compute the average predicted
+            probability for each orthant. Defaults to 100.
+        range_start (float, optional): The lower bound (inclusive) for the radii used to plot the variation on. 
+            Defaults to 0.5. Must be > 0 to be meaningful.
+        range_stop (float, optional): The upper bound (exclusive) for the radii used to plot the variation on. 
+            Defaults to 2.6. Must be > 0 to be meaningful.
+        range_step (float, optional): The step size for each increment in radius. Defaults to 0.1.
+            Must be > 0 to be meaningful.
+        centre (torch.Tensor, optional): The centre of the sphere (signless).
+            Defaults to tensor([4., 4., 4., 4., 4., 4., 4.]).
+        nrows (int, optional): The number of rows in the subplots produced. Defaults to 2.
+        ncols (int, optional): The number of columns in the subplots produced. Defaults to 4.
+            nrows * ncols being 8 allows for maximum subplot usage, since 8 subplots are produced.
+        fps (int, optional): The frame rate of the produced animation. Defaults to 20.
+        device (torch.device, optional): The device on which the model is used to predict on.
+            Defaults to cpu.
+    """
+    random_orthant = np.random.choice(range(128), 1)
+    reqd_orthants = ORTHANTS[random_orthant].reshape(1, -1)
+    for i in range(7):
+        new_orthant = torch.clone(ORTHANTS[random_orthant]).reshape(-1,)
+        new_orthant[i] *= -1.
+        reqd_orthants = torch.cat([reqd_orthants, new_orthant.reshape(1, -1)])
+    X_radial = torch.cat([
+        torch.cat([
+            torch.cat([
+                generate_point(radius, centre, reqd_orthants[i]).reshape(1, -1) for j in range(num_samples_per_orthant)
+            ]).reshape(1, num_samples_per_orthant, 7) for radius in np.arange(range_start, range_stop, range_step)
+        ]).reshape(1, int((range_stop-range_start)/range_step), num_samples_per_orthant, 7) for i in range(8)
+    ])
+
+    fig, ax = plt.subplots(nrows, ncols, figsize=(18, 9))
+
+    def animate(i):
+        Y_radial = torch.cat([
+            torch.tensor([
+                torch.mean(predict(models[i], X_radial[j][r], device)) for r in range(int((range_stop-range_start)/range_step))
+            ]).reshape(1, -1) for j in range(8)
+        ])
+        for i1 in range(nrows):
+            for i2 in range(ncols):
+                ax[i1][i2].clear()
+                ax[i1][i2].plot(torch.arange(range_start, range_stop, range_step), Y_radial[int(ncols*i1 + i2)])
+                ax[i1][i2].set_title('Orthant '+str(find_orthant(reqd_orthants[int(ncols*i1 + i2)]))+', '+str(orthant_counts[find_orthant(reqd_orthants[int(ncols*i1 + i2)])])+' points, avg probability of class 1 vs radius')
+                ax[i1][i2].annotate(str(Y_radial[int(ncols*i1 + i2)][int((1.-range_start)/range_step)]), (1., Y_radial[int(ncols*i1 + i2)][int((1.-range_start)/range_step)]))
+                ax[i1][i2].annotate(str(Y_radial[int(ncols*i1 + i2)][int((2.-range_start)/range_step)]), (2., Y_radial[int(ncols*i1 + i2)][int((2.-range_start)/range_step)]))
+                ax[i1][i2].set_ylim(-0.1, 1.1)
+        plt.suptitle('Epoch '+str(i))
+    
+    ani = FuncAnimation(fig, animate, frames=len(models), interval=1000/fps, repeat=True)
+    writer = FFMpegWriter(fps=fps, metadata=dict(artist='Me'), bitrate=1800)
+
+    now = datetime.now()
+    folder_name = 'animations/' + now.strftime("%d%m%Y_%H%M")
+    os.mkdir(folder_name)
+
+    ani.save(folder_name+'/'+mp4_save_file_name+'.mp4', writer=writer)

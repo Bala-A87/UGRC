@@ -71,7 +71,7 @@ def generate_point(
         x (torch.Tensor): a point on the specified sphere, of shape (7,)
     
     Example usage:
-    >>> generate_point(2, tensor([1., 1., 1., 1., 1., 1., 1.]))
+    >>> generate_point(2, tensor([4., 4., 4., 4., 4., 4., 4.], tensor([1., 1., 1., 1., 1., 1., 1.]))
     tensor([2., 4., 4., 4., 4., 4., 4.])
     """
     phi = torch.rand((6,)) * torch.pi
