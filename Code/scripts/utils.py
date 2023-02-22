@@ -319,11 +319,11 @@ def plot_radial_visualization(
             for i2 in range(ncols):
                 ax[i1][i2].clear()
                 ax[i1][i2].plot(torch.arange(range_start, range_stop, range_step), Y_radial[int(ncols*i1 + i2)])
-                ax[i1][i2].set_title('Orthant '+str(find_orthant(reqd_orthants[int(ncols*i1 + i2)]))+', '+str(orthant_counts[find_orthant(reqd_orthants[int(ncols*i1 + i2)])])+' points, avg probability of class 1 vs radius')
+                ax[i1][i2].set_title('Orthant '+str(find_orthant(reqd_orthants[int(ncols*i1 + i2)]))+', '+str(orthant_counts[find_orthant(reqd_orthants[int(ncols*i1 + i2)])])+' points')
                 ax[i1][i2].annotate(str(Y_radial[int(ncols*i1 + i2)][int((1.-range_start)/range_step)]), (1., Y_radial[int(ncols*i1 + i2)][int((1.-range_start)/range_step)]))
                 ax[i1][i2].annotate(str(Y_radial[int(ncols*i1 + i2)][int((2.-range_start)/range_step)]), (2., Y_radial[int(ncols*i1 + i2)][int((2.-range_start)/range_step)]))
                 ax[i1][i2].set_ylim(-0.1, 1.1)
-        plt.suptitle('Epoch '+str(i))
+        plt.suptitle('Epoch '+str(i)+', avg probability of class 1 vs radius')
     
     ani = FuncAnimation(fig, animate, frames=len(models), interval=1000/fps, repeat=True)
     writer = FFMpegWriter(fps=fps, metadata=dict(artist='Me'), bitrate=1800)
