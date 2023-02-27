@@ -255,6 +255,7 @@ def plot_radial_visualization(
     models: List[torch.nn.Module],
     mp4_save_file_name: str,
     orthant_counts: torch.Tensor,
+    main_orthant: int = None,
     num_samples_per_orthant: int = 100,
     range_start: float = 0.5,
     range_stop: float = 2.6,
@@ -266,8 +267,8 @@ def plot_radial_visualization(
     device: torch.device = 'cpu'
 ) -> None:
     """
-    Plots a visualization of the variation of the probability of class 1 with radius of the sphere, in a random orthant
-    and its surrounding 7 neighbors, evolving with training.
+    Plots a visualization of the variation of the probability of class 1 with radius of the sphere, in a specified/random 
+    orthant and its surrounding 7 neighbors, evolving with training.
 
     Args:
         models (list): List of models, one corresponding to each epoch of training, to capture the state during each epoch
@@ -276,6 +277,8 @@ def plot_radial_visualization(
         expected, without any directories or extension.
         orthant_counts (torch.Tensor): Number of data points used for training in each orthant.
             Tensor of shape (128,).
+        main_orthant (int, optional): The main orthant around which to visualize.
+            Defaults to None, in which case a random orthant is chosen.
         num_samples_per_orthant (int, optional): The number of data points to use to compute the average predicted
             probability for each orthant. Defaults to 100.
         range_start (float, optional): The lower bound (inclusive) for the radii used to plot the variation on. 
@@ -293,10 +296,11 @@ def plot_radial_visualization(
         device (torch.device, optional): The device on which the model is used to predict on.
             Defaults to cpu.
     """
-    random_orthant = np.random.choice(range(128), 1)
-    reqd_orthants = ORTHANTS[random_orthant].reshape(1, -1)
+    if main_orthant is None:
+        main_orthant = np.random.choice(range(128), 1)
+    reqd_orthants = ORTHANTS[main_orthant].reshape(1, -1)
     for i in range(7):
-        new_orthant = torch.clone(ORTHANTS[random_orthant]).reshape(-1,)
+        new_orthant = torch.clone(ORTHANTS[main_orthant]).reshape(-1,)
         new_orthant[i] *= -1.
         reqd_orthants = torch.cat([reqd_orthants, new_orthant.reshape(1, -1)])
     X_radial = torch.cat([

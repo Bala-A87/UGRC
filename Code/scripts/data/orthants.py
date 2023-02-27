@@ -104,7 +104,8 @@ def generate_train_data(
     centre: torch.Tensor = CENTRE,
     low_radius: float = LOW_RADIUS,
     high_radius: float = HIGH_RADIUS,
-    flips: torch.Tensor = torch.zeros(128)
+    flips: torch.Tensor = torch.zeros(128),
+    random_state: int = None
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Generates train data of concentric 7-spheres in each orthant of 7d space. The 7-spheres are centred at
@@ -141,8 +142,10 @@ def generate_train_data(
         Y_training: torch.Tensor of shape (num_samples, 1), the labels
         orthant_counts: torch.Tensor of shape (128,), the number of data points in each orthant
     """
-    high_orthant_indices, lower_orthant_indices = train_test_split(np.arange(128), test_size=low_frac)
-    low_orthant_indices, zero_orthant_indices = train_test_split(lower_orthant_indices, test_size=zero_frac)
+    if random_state is not None:
+        torch.random.manual_seed(random_state)
+    high_orthant_indices, lower_orthant_indices = train_test_split(np.arange(128), test_size=low_frac, random_state=random_state)
+    low_orthant_indices, zero_orthant_indices = train_test_split(lower_orthant_indices, test_size=zero_frac, random_state=random_state)
 
     X_training_low_0 = torch.cat([
         torch.cat([
@@ -195,7 +198,8 @@ def generate_test_data(
     centre: torch.Tensor = CENTRE,
     low_radius: float = LOW_RADIUS,
     high_radius: float = HIGH_RADIUS,
-    flips: torch.Tensor = torch.zeros(128)
+    flips: torch.Tensor = torch.zeros(128),
+    random_state: int = None
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Generates test data of 2 concentric 7-spheres in each orthant of 7d space. The spheres have an unsigned
@@ -218,6 +222,8 @@ def generate_test_data(
         X_test: torch.Tensor of shape (num_samples, 7), the data points
         Y_test: torch.Tensor of shape (num_samples, 1), the labels
     """
+    if random_state is not None:
+        torch.random.manual_seed(random_state)
     X_test = torch.cat([
         torch.cat([
             torch.cat([

@@ -7,6 +7,8 @@ class SimpleNN(nn.Module):
     Args:
         input_size (int): Number of input features.
         output_size (int, optional): Number of outputs to produce. Defaults to 1.
+        activation (torch.nn.Module): Activation function to use for the non-output layers.
+            Defaults to torch.nn.ReLU().
         task_type (str, optional): Type of task to perform.
             Allowed values:
                 'regression',
@@ -23,21 +25,26 @@ class SimpleNN(nn.Module):
         self,
         input_size: int,
         output_size: int = 1,
+        activation: nn.Module = nn.ReLU(),
         task_type: str = 'classification',
         hidden_layers: int = 2,
         hidden_units: int = 32
     ) -> None:
         super().__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.activation = activation
+        self.task_type = task_type
         self.hidden_layers = hidden_layers
         self.hidden_units = hidden_units
         self.input = nn.Sequential(
             nn.Linear(in_features=input_size, out_features=hidden_units),
-            nn.ReLU()
+            activation
         )
         self.hidden = nn.Sequential()
         for i in range(hidden_layers):
             self.hidden.append(nn.Linear(in_features=hidden_units, out_features=hidden_units))
-            self.hidden.append(nn.ReLU())
+            self.hidden.append(activation)
             
         if task_type.lower() == 'regression':
             self.output = nn.Sequential(
@@ -57,3 +64,15 @@ class SimpleNN(nn.Module):
     
     def forward(self, x):
         return self.output(self.hidden(self.input(x)))
+
+    def clone(self) -> nn.Module:
+        new_model = SimpleNN(
+            input_size=self.input_size,
+            output_size=self.output_size,
+            activation=self.activation,
+            task_type=self.task_type,
+            hidden_layers=self.hidden_layers,
+            hidden_units=self.hidden_units
+        )
+        new_model.load_state_dict(self.state_dict())
+        return new_model

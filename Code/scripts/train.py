@@ -96,8 +96,9 @@ def train_model(
         history['val_loss'].append(val_loss.detach().cpu().numpy())
         history['val_score'].append(val_score.detach().cpu().numpy())
         if return_models:
-            curr_model = model.__class__(model.hidden_layers, model.hidden_units).to(device) # Be careful with this!!
-            curr_model.load_state_dict(model.state_dict())
+            # curr_model = model.__class__(model.hidden_layers, model.hidden_units).to(device) # Be careful with this!!
+            # curr_model.load_state_dict(model.state_dict())
+            curr_model = model.clone().to(device)
             history['models'].append(curr_model)
 
         if verbose >= 2:
