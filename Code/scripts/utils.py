@@ -4,7 +4,7 @@ from scipy.stats import pearsonr
 import torch
 from scripts.data.orthants import find_orthant, ORTHANTS, CENTRE, HIGH_COUNT, HIGH_SPREAD, generate_point
 from matplotlib.animation import FuncAnimation, PillowWriter, FFMpegWriter
-from typing import Tuple, List
+from typing import Tuple, List, Iterable
 from scripts.test import predict
 from datetime import datetime
 import os
@@ -23,7 +23,8 @@ class CustomDataset(Dataset):
         return len(self.labels)
 
 def make_dataloader(
-    X, y, 
+    X: Iterable, 
+    y: Iterable, 
     batch_size: int,
     shuffle: bool = False
 ) -> DataLoader:

@@ -66,6 +66,9 @@ class SimpleNN(nn.Module):
         return self.output(self.hidden(self.input(x)))
 
     def clone(self) -> nn.Module:
+        """
+        Returns a clone of the current SimpleNN object.
+        """
         new_model = SimpleNN(
             input_size=self.input_size,
             output_size=self.output_size,

@@ -135,6 +135,9 @@ def generate_train_data(
         high_radius (float, optional): Radius of outer spheres. Defaults to 2.
         flips (torch.Tensor, optional): Whether label is flipped in each orthant (1 if so, else 0).
             Defaults to torch.zeros(128) (no flips).
+        random_state (int, optional): The seed to use while generating the data points, also used to seed the
+            randomization in selecting the dense/sparse/empty orthants.
+            Defaults to None (no random seed is set).
         
     Returns:
         A 3-tuple of torch.Tensors, (X_training, Y_training, orthant_counts)
@@ -216,9 +219,11 @@ def generate_test_data(
         high_radius (float, optional): Radius of outer spheres. Defaults to 2.
         flips (torch.Tensor, optional): Whether label is flipped in each orthant (1 if so, else 0).
             Defaults to torch.zeros(128) (no flips).
+        random_state (int, optional): The seed to use while generating the data points.
+            Defaults to None (no random seed is set).
     
     Returns:
-        A 2-tuple of torch.Tensors, (X_test, Y_test, flips)
+        A 2-tuple of torch.Tensors, (X_test, Y_test)
         X_test: torch.Tensor of shape (num_samples, 7), the data points
         Y_test: torch.Tensor of shape (num_samples, 1), the labels
     """

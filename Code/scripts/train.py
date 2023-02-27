@@ -14,7 +14,7 @@ def train_model(
     verbose: int = 2,
     device: torch.device = 'cpu',
     return_models: bool = False
-) -> Dict[str, List[float]]:
+) -> Dict[str, List]:
     """
     Trains a torch NN model with the provided arguments.
 
@@ -39,7 +39,7 @@ def train_model(
             Defaults to False.
     
     Returns:
-        A history object containing all the training information, in the form of a dict with str keys and values of type list of floats.
+        A history object containing all the training information, in the form of a dict with str keys and values of type list.
 
         Valid keys of the dict: 
             epochs
