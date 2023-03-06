@@ -2,7 +2,7 @@ import torch
 
 def get_grads(u, model: torch.nn.Module) -> torch.Tensor:
     """
-    Computes gradient of output of model for input u (single input) wrt parameters of model
+    Computes gradient of output of `model` for input u (single input) wrt parameters of `model`
 
     Args:
         u: Input data row (1 entry) of shape (num_features,)
@@ -13,9 +13,22 @@ def get_grads(u, model: torch.nn.Module) -> torch.Tensor:
     """
     return torch.cat([torch.reshape(grads, (-1,)) for grads in list(torch.autograd.grad(model(u), model.parameters()))]).reshape(1, -1)
 
+def get_ntk_feature_matrix(U, model: torch.nn.Module) -> torch.Tensor:
+    """
+    Computes the feature matrix corresponding to the NTK for neural network `model`
+
+    Args:
+        U: Data matrix of shape (num_samples, num_features)
+        model (torch.nn.Module): A neural network model that can accept U as input
+    
+    Returns:
+        Phi_U (torch.Tensor): Feature matrix of shape (num_samples, num_parameters), corresponding to the NTK described by `model`, where num_parameters is the number of parameters in the model
+    """
+    return torch.cat([get_grads(u, model) for u in U])
+
 def compute_ntk(U, V, model: torch.nn.Module) -> torch.Tensor:
     """
-    Computes NTK for data matrices U, V with neural network model
+    Computes NTK for data matrices U, V with neural network `model`
 
     Args:
         U: Data matrix 1 of shape (num_samples_U, num_features)
