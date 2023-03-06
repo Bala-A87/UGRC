@@ -7,8 +7,8 @@ class SimpleNN(nn.Module):
     Args:
         input_size (int): Number of input features.
         output_size (int, optional): Number of outputs to produce. Defaults to 1.
-        activation (torch.nn.Module): Activation function to use for the non-output layers.
-            Defaults to torch.nn.ReLU().
+        activation: Activation function (class, not object) to use for the non-output layers.
+            Defaults to torch.nn.ReLU.
         task_type (str, optional): Type of task to perform.
             Allowed values:
                 'regression',
@@ -25,7 +25,7 @@ class SimpleNN(nn.Module):
         self,
         input_size: int,
         output_size: int = 1,
-        activation: nn.Module = nn.ReLU(),
+        activation = nn.ReLU,
         task_type: str = 'classification',
         hidden_layers: int = 2,
         hidden_units: int = 32
@@ -39,12 +39,12 @@ class SimpleNN(nn.Module):
         self.hidden_units = hidden_units
         self.input = nn.Sequential(
             nn.Linear(in_features=input_size, out_features=hidden_units),
-            activation
+            activation()
         )
         self.hidden = nn.Sequential()
         for i in range(hidden_layers):
             self.hidden.append(nn.Linear(in_features=hidden_units, out_features=hidden_units))
-            self.hidden.append(activation)
+            self.hidden.append(activation())
             
         if task_type.lower() == 'regression':
             self.output = nn.Sequential(
