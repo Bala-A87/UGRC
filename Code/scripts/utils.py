@@ -103,7 +103,7 @@ class EarlyStopping():
                 return True
         return False
 
-def plot_train_history(history):
+def plot_train_history(history, save_file: str = None):
     """
     Plots loss and metric score curves for training and validation using the history object returned by training function.
     """
@@ -121,7 +121,10 @@ def plot_train_history(history):
     plt.title('Score')
     plt.legend()
 
-    plt.show()
+    if save_file is None:
+        plt.show()
+    else:
+        plt.savefig(save_file)
 
 def plot_ntk_corrs(preds_nn, preds_km_init, preds_km_inf):
     """
