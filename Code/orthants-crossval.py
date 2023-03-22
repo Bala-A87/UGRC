@@ -35,12 +35,12 @@ config = {
     'weight_decays': np.logspace(-5, 5, 11).tolist() + [0.0]
 }
 
-plot_path_str = f'plots/orthants-single-empty-{config["depth"]}'
+plot_path_str = f'plots/small_orthants-single-empty-{config["depth"]}'
 plot_path = Path(plot_path_str)
 if not plot_path.is_dir():
     os.mkdir(plot_path)
 
-log_file = f'logs/orthants-single-empty-{config["depth"]}.txt'
+log_file = f'logs/small_orthants-single-empty-{config["depth"]}.txt'
 if Path(log_file).is_file():
     os.remove(log_file)
 
@@ -48,7 +48,7 @@ HIGH_COUNT = 100
 LOW_FRAC = 1/64
 ZERO_FRAC = 0.5
 TEST_COUNT = 100
-CENTRE = 4 * torch.ones(7)
+CENTRE = 2.5 * torch.ones(7) 
 LOW_RADIUS = 1.
 HIGH_RADIUS = 2.
 
@@ -59,7 +59,8 @@ X_train, Y_train, orthant_counts = generate_train_data(
     high_spread=0,
     low_frac=LOW_FRAC,
     zero_frac=ZERO_FRAC,
-    random_state=7357
+    centre=CENTRE,
+    random_state=535
 )
 add_log(f'X_train.shape == {X_train.shape}\n', log_file)
 add_log(f'Y_train.shape == {Y_train.shape}\n', log_file)
@@ -69,7 +70,7 @@ for i in range(128):
         ZERO_ORTHANT_INDEX = i
 add_log(f'Empty orthant is orthant number {ZERO_ORTHANT_INDEX}\n', log_file)
 
-X_test, Y_test = generate_test_data(TEST_COUNT, random_state=7753)
+X_test, Y_test = generate_test_data(TEST_COUNT, CENTRE, random_state=652)
 add_log(f'X_test.shape == {X_test.shape}\n', log_file)
 add_log(f'Y_test.shape == {Y_test.shape}\n', log_file)
 
@@ -136,6 +137,7 @@ add_log(f'\nBest validation score after {EPOCHS} epochs: {best_score:.6f}\n', lo
 add_log(f'Best configuration: width: {best_width}, lr: {best_eta}, lambda: {best_weight_decay}\n', log_file)
 
 best_model_nn = SimpleNN(7, hidden_layers=config["depth"], hidden_units=best_width).to(device)
+model_0 = best_model_nn.clone()
 loss_fn = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
 metric = BinaryAccuracy()
@@ -153,6 +155,8 @@ history = train_model(
     device=device,
     return_models=True
 )
+
+models = [model_0] + history['models']
 
 plot_train_history(history, save_file=plot_path_str+'/train_val_loss_score.png')
 
@@ -176,15 +180,15 @@ def plot_closest_distances(
     model_index: int = -1,
     k: int = 10
 ) -> None:
-    model = history['models'][model_index]
+    model = models[model_index]
 
     top_dists_eucl_0, top_dists_eucl_1 = get_all_min_dists_inds(X_empty_0, X_train, Y_train, k), get_all_min_dists_inds(X_empty_1, X_train, Y_train, k)
 
     top_dists_last_0, top_dists_last_1 = get_all_min_dists_inds(get_output_layer_feature_matrix(model, X_empty_0), get_output_layer_feature_matrix(model, X_train), Y_train, k), get_all_min_dists_inds(get_output_layer_feature_matrix(model, X_empty_1), get_output_layer_feature_matrix(model, X_train), Y_train, k)
 
-    top_dists_grad_0, top_dists_grad_1 = get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_0, model), get_ntk_feature_matrix(X_train, model), Y_train, k), get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_1, model), get_ntk_feature_matrix(X_train, model), Y_train, k)
+    # top_dists_grad_0, top_dists_grad_1 = get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_0, model), get_ntk_feature_matrix(X_train, model), Y_train, k), get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_1, model), get_ntk_feature_matrix(X_train, model), Y_train, k)
 
-    fig, ax = plt.subplots(3, 2, figsize=(20, 20))
+    fig, ax = plt.subplots(2, 2, figsize=(20, 20))
     for i in range(TEST_COUNT): 
         ax[0][0].scatter(i*torch.ones(k), top_dists_eucl_0[i][:, 0], c=top_dists_eucl_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
         ax[0][0].set_title('Eucl, neg')
@@ -197,12 +201,12 @@ def plot_closest_distances(
     for i in range(TEST_COUNT):
         ax[1][1].scatter(i*torch.ones(k), top_dists_last_1[i][:, 0], c=top_dists_last_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
         ax[1][1].set_title('Last, pos')
-    for i in range(TEST_COUNT):
-        ax[2][0].scatter(i*torch.ones(k), top_dists_grad_0[i][:, 0], c=top_dists_grad_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
-        ax[2][0].set_title('Grad, neg')
-    for i in range(TEST_COUNT):
-        ax[2][1].scatter(i*torch.ones(k), top_dists_grad_1[i][:, 0], c=top_dists_grad_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
-        ax[2][1].set_title('Grad, pos')
+    # for i in range(TEST_COUNT):
+    #     ax[2][0].scatter(i*torch.ones(k), top_dists_grad_0[i][:, 0], c=top_dists_grad_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+    #     ax[2][0].set_title('Grad, neg')
+    # for i in range(TEST_COUNT):
+    #     ax[2][1].scatter(i*torch.ones(k), top_dists_grad_1[i][:, 0], c=top_dists_grad_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+    #     ax[2][1].set_title('Grad, pos')
 
     plt.suptitle(f'Epoch {model_index}, red: neg, green: pos')
     plt.savefig(f'{plot_path_str}/dists_{"init" if model_index==0 else "final"}_k_{k}.png')
