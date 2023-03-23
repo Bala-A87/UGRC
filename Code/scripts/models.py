@@ -79,3 +79,46 @@ class SimpleNN(nn.Module):
         )
         new_model.load_state_dict(self.state_dict())
         return new_model
+    
+    def freeze_first(self) -> None:
+        """
+        Freezes the weights of all the layers of the model except the last layer.
+        """
+        for param in self.input.parameters():
+            param.requires_grad = False
+            print('Input layer weights frozen')
+        
+    def freeze_last(self) -> None:
+        """
+        Freezes the weights of the last layer of the model.
+        """
+        for param in self.hidden.parameters():
+            param.requires_grad = False
+            print('Hidden layer weights frozen')
+        for param in self.output.parameters():
+            param.requires_grad = False
+            print('Output layer weights frozen')
+    
+    def revive_last(self) -> None:
+        """
+        Revives (allows learning) the weights of the last layer of the model.
+        """
+        for param in self.hidden.parameters():
+            param.requires_grad = True
+            print('Hidden layer weights revived')
+        for param in self.output.parameters():
+            param.requires_grad = True
+            print('Output layer weights revived')
+    
+    def reinit_last(self) -> None:
+        """
+        Reinitializes the weights of the last layer of the model.
+        """
+        for child in self.hidden.children():
+            if hasattr(child, 'reset_parameters'):
+                child.reset_parameters()
+                print('Hidden layer weights reinitialized')
+        for child in self.output.children():
+            if hasattr(child, 'reset_parameters'):
+                child.reset_parameters()
+                print('Output layer weights reinitialized')

@@ -11,6 +11,8 @@ def train_model(
     metric: torch.nn.Module,
     epochs: int,
     early_stopping: EarlyStopping = None,
+    strategy: str = 'reg',
+    warmup_epochs: int = 1,
     verbose: int = 2,
     device: torch.device = 'cpu',
     return_models: bool = False
@@ -28,6 +30,14 @@ def train_model(
         epochs (int): Number of epochs to train for.
         early_stopping (EarlyStopping, optional): EarlyStopping object for regularization.
             Defaults to None.
+        strategy (str, optional): Training strategy to use for training. Supported options:
+            reg,
+            stop_first,
+            first_last,
+            reinit.
+            Defaults to reg.
+        warmup_epochs (int, optional): If training strategy is not reg, the number of epochs to warmup for,
+        before freezing first layers. Defaults to 1.
         verbose (int, optional): Verbosity of information printed during training.
             < 1: No messages printed.
             >= 1, < 2: Beginning and ending messages printed.
@@ -59,7 +69,20 @@ def train_model(
         'val_score': [],
         'models': []
     }
-    for epoch in range(epochs):
+    start_epoch = 1 if strategy == 'reg' else 1-warmup_epochs
+    if strategy == 'first_last':
+        model.freeze_last()
+    for epoch in range(start_epoch, epochs+1):
+        if epoch == 1:
+            if strategy == 'stop_first':
+                model.freeze_first()
+            elif strategy == 'first_last':
+                model.freeze_first()
+                model.revive_last()
+            elif strategy == 'reinit':
+                model.freeze_first()
+                model.reinit_last()
+
         train_loss, train_score = 0.0, 0.0
         for (X, y) in train_dataloader:
             X, y = X.to(device), y.to(device)
@@ -90,19 +113,17 @@ def train_model(
             val_loss /= len(val_dataloader)
             val_score /= len(val_dataloader)
 
-        history['epochs'].append(epoch+1)
+        history['epochs'].append(epoch)
         history['train_loss'].append(train_loss.detach().cpu().numpy())
         history['train_score'].append(train_score.detach().cpu().numpy())
         history['val_loss'].append(val_loss.detach().cpu().numpy())
         history['val_score'].append(val_score.detach().cpu().numpy())
         if return_models:
-            # curr_model = model.__class__(model.hidden_layers, model.hidden_units).to(device) # Be careful with this!!
-            # curr_model.load_state_dict(model.state_dict())
             curr_model = model.clone().to(device)
             history['models'].append(curr_model)
 
         if verbose >= 2:
-            print(f'Epoch: {epoch+1} => Train loss: {train_loss:.6f}, Train score: {train_score:.6f}, Val loss: {val_loss:.6f}, Val score: {val_score:.6f}')
+            print(f'Epoch: {epoch} => Train loss: {train_loss:.6f}, Train score: {train_score:.6f}, Val loss: {val_loss:.6f}, Val score: {val_score:.6f}')
         
         if early_stopping is not None:
             stop = early_stopping.check_stop(epoch=epoch+1, loss=val_loss, weights=model.state_dict())
