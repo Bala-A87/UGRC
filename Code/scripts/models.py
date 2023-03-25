@@ -42,7 +42,7 @@ class SimpleNN(nn.Module):
             activation()
         )
         self.hidden = nn.Sequential()
-        for i in range(hidden_layers):
+        for i in range(hidden_layers-1):
             self.hidden.append(nn.Linear(in_features=hidden_units, out_features=hidden_units))
             self.hidden.append(activation())
             

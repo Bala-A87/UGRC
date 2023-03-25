@@ -29,7 +29,7 @@ class NegMeanSquaredError(torch.nn.Module):
         super().__init__()
     
     def forward(self, preds, y):
-        return -torch.sum((preds.detach() - y)**2)/len(y)
+        return -torch.sum((preds.detach().squeeze() - y.squeeze())**2)/len(y)
 
 class CategoricalAccuracy(torch.nn.Module):
     """

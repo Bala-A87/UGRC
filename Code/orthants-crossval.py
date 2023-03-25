@@ -26,6 +26,7 @@ device = 'cpu'
 
 args_parser = ArgumentParser()
 args_parser.add_argument('-d', '--depth', type=int, help='Depth (hidden layers) of the neural network')
+args_parser.add_argument('-c', '--centre', type=float, default=4., help='Centre of the sphere = CENTRE * torch.ones(7)')
 
 args = args_parser.parse_args()
 config = {
@@ -48,7 +49,7 @@ HIGH_COUNT = 100
 LOW_FRAC = 1/64
 ZERO_FRAC = 0.5
 TEST_COUNT = 100
-CENTRE = 2.5 * torch.ones(7) 
+CENTRE = args.centre * torch.ones(7) 
 LOW_RADIUS = 1.
 HIGH_RADIUS = 2.
 

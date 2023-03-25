@@ -59,8 +59,8 @@ def generate_point(
     orthant: torch.Tensor
 ) -> torch.Tensor:
     """
-    Generates a point on a 7-sphere of centre orthant * centre with radius radius, where
-    orthant denotes the signs wrt all 7 axes
+    Generates a point on a 7-sphere of centre `orthant` * `centre` with radius `radius`, where
+    `orthant` denotes the signs wrt all 7 axes
 
     Args:
         radius (float): radius of the 7-sphere
@@ -74,18 +74,21 @@ def generate_point(
     >>> generate_point(2, tensor([4., 4., 4., 4., 4., 4., 4.], tensor([1., 1., 1., 1., 1., 1., 1.]))
     tensor([2., 4., 4., 4., 4., 4., 4.])
     """
-    phi = torch.rand((6,)) * torch.pi
-    phi[5] *= 2
-    diff_unit = torch.tensor([
-        torch.cos(phi[0]),
-        torch.sin(phi[0])*torch.cos(phi[1]),
-        torch.sin(phi[0])*torch.sin(phi[1])*torch.cos(phi[2]),
-        torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.cos(phi[3]),
-        torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.cos(phi[4]),
-        torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.sin(phi[4])*torch.cos(phi[5]),
-        torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.sin(phi[4])*torch.sin(phi[5])
-    ])
-    return torch.mul(centre + radius * diff_unit, orthant)
+    # phi = torch.rand((6,)) * torch.pi
+    # phi[5] *= 2
+    # diff_unit = torch.tensor([
+    #     torch.cos(phi[0]),
+    #     torch.sin(phi[0])*torch.cos(phi[1]),
+    #     torch.sin(phi[0])*torch.sin(phi[1])*torch.cos(phi[2]),
+    #     torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.cos(phi[3]),
+    #     torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.cos(phi[4]),
+    #     torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.sin(phi[4])*torch.cos(phi[5]),
+    #     torch.sin(phi[0])*torch.sin(phi[1])*torch.sin(phi[2])*torch.sin(phi[3])*torch.sin(phi[4])*torch.sin(phi[5])
+    # ])
+    diff = torch.randn(7)
+    diff_norm = torch.sum(diff**2).sqrt()
+    diff_unit = diff / diff_norm
+    return centre * orthant + radius * diff_unit
 
 def generate_flips(flip_proba: float = 0.):
     flips = torch.zeros(128)
