@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 import os
 from pathlib import Path
-from scripts.data.orthants import generate_train_data, generate_test_data, ORTHANTS
+from scripts.data.orthants import generate_train_data, generate_test_data, ORTHANTS, generate_point
 from scripts.utils import make_dataloader, EarlyStopping, plot_train_history
 from scripts.models import SimpleNN
 from scripts.train import train_model
@@ -36,12 +36,12 @@ config = {
     'weight_decays': np.logspace(-5, 5, 11).tolist() + [0.0]
 }
 
-plot_path_str = f'plots/small_orthants-single-empty-{config["depth"]}'
+plot_path_str = f'plots/orthants-single-empty-centre_{args.centre}-{config["depth"]}'
 plot_path = Path(plot_path_str)
 if not plot_path.is_dir():
     os.mkdir(plot_path)
 
-log_file = f'logs/small_orthants-single-empty-{config["depth"]}.txt'
+log_file = f'logs/orthants-single-empty-centre_{args.centre}-{config["depth"]}.txt'
 if Path(log_file).is_file():
     os.remove(log_file)
 
@@ -87,6 +87,9 @@ for i in range(128):
     if (ORTHANTS[i] * ORTHANTS[ZERO_ORTHANT_INDEX]).sum() == 5:
         neighboring_orthants.append(i)
 add_log(f'Orthants neighboring the empty orthant are: {neighboring_orthants}\n', log_file)
+
+key_orthants = [ZERO_ORTHANT_INDEX, neighboring_orthants[0], list(set(range(128)) - set(neighboring_orthants+[ZERO_ORTHANT_INDEX]))[0]]
+key_orthants_types = ['empty', 'neigbor', 'random']
 
 X_empty_0 = X_val[Y_val.squeeze() == 0]
 X_empty_1 = X_val[Y_val.squeeze() == 1]
@@ -168,7 +171,7 @@ def get_output_layer_feature_matrix(model: SimpleNN, U: torch.Tensor) -> torch.T
     return torch.cat([get_output_layer_features(model, u).reshape(1, -1) for u in U])
 
 def get_min_dists_inds(x: torch.Tensor, Y: torch.Tensor, labels: torch.Tensor, k: int = 10):
-    dists = ((x.reshape(1, -1) - Y)**2).sum(dim=1).sort()
+    dists = ((x.reshape(1, -1) - Y)**2).sum(dim=1).sqrt().sort()
     top_inds = dists[1][:k]
     top_dists = dists[0][:k]
     top_classes = torch.tensor([labels[ind].squeeze() for ind in top_inds])
@@ -176,6 +179,8 @@ def get_min_dists_inds(x: torch.Tensor, Y: torch.Tensor, labels: torch.Tensor, k
 
 def get_all_min_dists_inds(X: torch.Tensor, Y: torch.Tensor, labels: torch.Tensor, k: int = 10):
     return torch.cat([get_min_dists_inds(x, Y, labels, k).unsqueeze(0) for x in X])
+
+COLORS = np.array(['r', 'g'])
 
 def plot_closest_distances(
     model_index: int = -1,
@@ -187,27 +192,19 @@ def plot_closest_distances(
 
     top_dists_last_0, top_dists_last_1 = get_all_min_dists_inds(get_output_layer_feature_matrix(model, X_empty_0), get_output_layer_feature_matrix(model, X_train), Y_train, k), get_all_min_dists_inds(get_output_layer_feature_matrix(model, X_empty_1), get_output_layer_feature_matrix(model, X_train), Y_train, k)
 
-    # top_dists_grad_0, top_dists_grad_1 = get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_0, model), get_ntk_feature_matrix(X_train, model), Y_train, k), get_all_min_dists_inds(get_ntk_feature_matrix(X_empty_1, model), get_ntk_feature_matrix(X_train, model), Y_train, k)
-
     fig, ax = plt.subplots(2, 2, figsize=(20, 20))
     for i in range(TEST_COUNT): 
-        ax[0][0].scatter(i*torch.ones(k), top_dists_eucl_0[i][:, 0], c=top_dists_eucl_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+        ax[0][0].scatter(i*torch.ones(k), top_dists_eucl_0[i][:, 0], c=COLORS[top_dists_eucl_0[i][:, 1].numpy().astype(int)], s=10, alpha=0.4)
         ax[0][0].set_title('Eucl, neg')
     for i in range(TEST_COUNT):
-        ax[0][1].scatter(i*torch.ones(k), top_dists_eucl_1[i][:, 0], c=top_dists_eucl_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+        ax[0][1].scatter(i*torch.ones(k), top_dists_eucl_1[i][:, 0], c=COLORS[top_dists_eucl_1[i][:, 1].numpy().astype(int)], s=10, alpha=0.4)
         ax[0][1].set_title('Eucl, pos')
     for i in range(TEST_COUNT):
-        ax[1][0].scatter(i*torch.ones(k), top_dists_last_0[i][:, 0], c=top_dists_last_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+        ax[1][0].scatter(i*torch.ones(k), top_dists_last_0[i][:, 0], c=COLORS[top_dists_last_0[i][:, 1].numpy().astype(int)], s=10, alpha=0.4)
         ax[1][0].set_title('Last, neg')
     for i in range(TEST_COUNT):
-        ax[1][1].scatter(i*torch.ones(k), top_dists_last_1[i][:, 0], c=top_dists_last_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
+        ax[1][1].scatter(i*torch.ones(k), top_dists_last_1[i][:, 0], c=COLORS[top_dists_last_1[i][:, 1].numpy().astype(int)], s=10, alpha=0.4)
         ax[1][1].set_title('Last, pos')
-    # for i in range(TEST_COUNT):
-    #     ax[2][0].scatter(i*torch.ones(k), top_dists_grad_0[i][:, 0], c=top_dists_grad_0[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
-    #     ax[2][0].set_title('Grad, neg')
-    # for i in range(TEST_COUNT):
-    #     ax[2][1].scatter(i*torch.ones(k), top_dists_grad_1[i][:, 0], c=top_dists_grad_1[i][:, 1], cmap='RdYlGn', s=10, alpha=0.4)
-    #     ax[2][1].set_title('Grad, pos')
 
     plt.suptitle(f'Epoch {model_index}, red: neg, green: pos')
     plt.savefig(f'{plot_path_str}/dists_{"init" if model_index==0 else "final"}_k_{k}.png')
@@ -317,3 +314,27 @@ plt.title("SVM (ntk)")
 plt.suptitle('Test accuracy vs orthant')
 
 plt.savefig(plot_path_str+'/accuracy_vs_orthant_number.png')
+
+X_radial = torch.cat([torch.cat([generate_point(r, CENTRE, torch.ones(7)).unsqueeze(0) for _ in range(100)]).unsqueeze(0) for r in np.arange(0.5, 2.6, 0.1)])
+
+plt.figure(figsize=(20, 6))
+for i in range(3):
+    plt.subplot(1, 3, i+1)
+    X_dec_bound = X_radial * ORTHANTS[key_orthants[i]]
+    proba_orthants = torch.tensor([predict(best_model_nn, X_r, device).mean() for X_r in X_dec_bound])
+    plt.plot(np.arange(0.5, 2.6, 0.1), proba_orthants)
+    plt.ylim(0.0, 1.0)
+    plt.title(key_orthants_types[i])
+plt.suptitle('Average predicted probability of class 1 vs radius, NN')
+plt.savefig(plot_path_str+'/nn_radial_decision_boundary.png')
+
+plt.figure(figsize=(20, 6))
+for i in range(3):
+    plt.subplot(1, 3, i+1)
+    X_dec_bound = X_radial * ORTHANTS[key_orthants[i]]
+    proba_orthants = torch.tensor([np.mean(best_model_km.predict(get_ntk_feature_matrix(X_r, best_model_nn))) for X_r in X_dec_bound])
+    plt.plot(np.arange(0.5, 2.6, 0.1), proba_orthants)
+    plt.ylim(0.0, 1.0)
+    plt.title(key_orthants_types[i])
+plt.suptitle('Average predicted probability (estimated) of class 1 vs radius, SVM')
+plt.savefig(plot_path_str+'/svm_radial_decision_boundary.png')
