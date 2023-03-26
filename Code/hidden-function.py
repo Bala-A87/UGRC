@@ -31,9 +31,34 @@ parser.add_argument('-mode', type=str.lower, choices=['reg', 'stop_first', 'firs
 
 args = parser.parse_args()
 
-log_path = Path(f'logs/hidden-function_{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}')
+log_path = Path(f'logs/hidden-function/{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}.txt')
 if log_path.is_file():
     os.remove(log_path)
+if not Path('logs/hidden-function/').is_dir():
+    if not Path('logs/').is_dir():
+        os.mkdir('logs/')
+    os.mkdir('logs/hidden-function/')
+
+if not Path('plots/hidden-function/').is_dir():
+    if not Path('plots/').is_dir():
+        os.mkdir('plots/')
+    os.mkdir('plots/hidden-function/')
+    os.mkdir('plots/hidden-function/train-val-loss-score/')
+    os.mkdir('plots/hidden-function/nn-fit/')
+    os.mkdir('plots/hidden-function/svm-fit/')
+
+if not Path('animations/cosine_variations/').is_dir():
+    if not Path('animations/').is_dir():
+        os.mkdir('animations/')
+    os.mkdir('animations/cosine_variations/')
+
+plot_dir = 'plots/hidden-function/'
+plot_file_name = f'{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}'
+evolution_plot_path = plot_dir + 'train-val-loss-score/' + plot_file_name + '.png'
+nn_fit_plot_path = plot_dir + 'nn-fit/' + plot_file_name + '.png'
+svm_fit_plot_path = plot_dir + 'svm-fit/' + plot_file_name + '.png'
+cosines_ani_path = 'animations/cosine_variations/' + plot_file_name + '.mp4'
+
 
 def add_log(log_str: str, file_name: Path = log_path) -> None:
     with open(file_name, 'a') as f:
@@ -100,10 +125,11 @@ torch.manual_seed(844)
 X = distribution.sample((DATA_SIZE,))
 add_log(f'X.shape == {X.shape}')
 
-scale_factor = args.cycles * torch.pi / X.sum(dim=1).max()
+scale_factor = args.cycles * torch.pi / X.sum(dim=1).abs().max()
 add_log(f'scale_factor == {scale_factor}')
+X *= scale_factor
 
-Y = torch.sin(scale_factor * X.sum(dim=1)).reshape(-1,)
+Y = torch.sin(X.sum(dim=1)).unsqueeze(1)
 add_log(f'Y.shape == {Y.shape}')
 
 X_training, X_test, Y_training, Y_test = train_test_split(X, Y, test_size=1000, random_state=13)
@@ -143,6 +169,12 @@ if config_file.is_file():
     best_weight_decay = best_config['weight_decay']
     best_score = best_config['score']
 else:
+    if not Path('configs/nn/hidden-function/').is_dir():
+        if not Path('configs/nn/').is_dir():
+            if not Path('configs/').is_dir():
+                os.mkdir('configs/')
+            os.mkdir('configs/nn/')
+        os.mkdir('configs/nn/hidden-function/')
     best_score = -torch.inf
     best_width = None
     best_activation = None
@@ -151,7 +183,7 @@ else:
 
 total_count = len(widths) * len(activations) * len(etas) * len(weight_decays)
 curr_count = 0
-EPOCHS = 50
+EPOCHS = 20
 
 if best_width is None:
     add_log(f'Cross-validating across {total_count} models.')
@@ -183,7 +215,7 @@ if best_width is None:
                         best_activation = activation
                         best_eta = eta
                         best_weight_decay = weight_decay
-                    print(f'[{curr_count}/{total_count}]\tWidth:{width}, Actn.:{activation}, lr:{eta}, w_d:{weight_decay} => Score:{curr_score:.6f}')
+                    add_log(f'[{curr_count}/{total_count}]\tWidth:{width}, Actn.:{activation}, lr:{eta}, w_d:{weight_decay} => Score:{curr_score:.6f}')
     best_config = {
         'score': float(best_score),
         'width': best_width,
@@ -222,7 +254,7 @@ history = train_model(
     return_models=True
 )
 
-plot_train_history(history, f'plots/hidden-function/train-val-loss-score/{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}')
+plot_train_history(history, evolution_plot_path)
 
 fig, ax = plt.subplots(1, 1, figsize=(8, 8))
 FPS = 5
@@ -241,7 +273,7 @@ def plot_cosines(i):
 ani = FuncAnimation(fig, plot_cosines, frames = len(models), interval=1000/FPS, repeat=True)
 writer = FFMpegWriter(fps=FPS, bitrate=1800, metadata=dict(arist='Me'))
 
-ani.save(f'animations/cosine_variations/{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}', writer=writer)
+ani.save(cosines_ani_path, writer=writer)
 """
 IS THE ANIMATION REALLY REQUIRED WHEN WE ARE USING WARMUP TRAINING METHODS? I DON'T THINK SO
 """
@@ -258,7 +290,7 @@ plt.subplot(121)
 plt.scatter(X_train.sum(dim=1), Y_train, c='g', label='True', s=4, alpha=0.2)
 plt.scatter(X_train.sum(dim=1), preds_train_nn, c='r', label='Predicted', s=4, alpha=0.2)
 plt.title('Train')
-plt.xlim(-args.cycles*torch.pi/scale_factor, args.cycles*torch.pi/scale_factor)
+plt.xlim(-args.cycles*torch.pi, args.cycles*torch.pi)
 plt.ylim(-1.25, 1.25)
 plt.legend()
 
@@ -266,12 +298,12 @@ plt.subplot(122)
 plt.scatter(X_test.sum(dim=1), Y_test, c='g', label='True', s=4, alpha=0.2)
 plt.scatter(X_test.sum(dim=1), preds_test_nn, c='r', label='Predicted', s=4, alpha=0.2)
 plt.title('Test')
-plt.xlim(-args.cycles*torch.pi/scale_factor, args.cycles*torch.pi/scale_factor)
+plt.xlim(-args.cycles*torch.pi, args.cycles*torch.pi)
 plt.ylim(-1.25, 1.25)
 plt.legend()
 
 plt.suptitle('NN')
-plt.savefig(f'plots/hidden-function/nn-fit/{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}')
+plt.savefig(nn_fit_plot_path)
 
 """
 SVM CROSS-VAL AND TRAINING
@@ -332,16 +364,16 @@ add_log(f'Best kernel: {best_kernel}')
 if best_kernel == 'ntk':
     X_test_ntk = get_ntk_feature_matrix(X_test, best_model_nn)
     best_model_km = LinearSVR(C=best_params_ntk['C'])
-    best_model_km.fit(X_train_ntk, Y_train)
+    best_model_km.fit(X_train_ntk, Y_train.squeeze())
     preds_train_km, preds_val_km, preds_test_km = best_model_km.predict(X_train_ntk), best_model_km.predict(X_val_ntk), best_model_km.predict(X_test_ntk)
 else:
     best_model_km = SVR(C=best_params_rbf['C'], gamma=best_params_rbf['gamma'])
-    best_model_km.fit(X_train, Y_train)
+    best_model_km.fit(X_train, Y_train.squeeze())
     preds_train_km, preds_val_km, preds_test_km = best_model_km.predict(X_train), best_model_km.predict(X_val), best_model_km.predict(X_test)
 
 add_log(f'preds_train_km.shape == {preds_train_km.shape}, preds_val_km.shape == {preds_val_km.shape}, preds_test_km.shape == {preds_test_km.shape}')
 
-score_train, score_val, score_test = mean_squared_error(Y_train, preds_train_km), mean_squared_error(Y_val, preds_val_km), mean_squared_error(Y_test, preds_test_km)
+score_train, score_val, score_test = mean_squared_error(Y_train.squeeze(), preds_train_km), mean_squared_error(Y_val.squeeze(), preds_val_km), mean_squared_error(Y_test.squeeze(), preds_test_km)
 add_log(f'score_train == {score_train}, score_val == {score_val}, score_test == {score_test}')
 
 plt.figure(figsize=(12, 6))
@@ -350,7 +382,7 @@ plt.subplot(121)
 plt.scatter(X_train.sum(dim=1), Y_train, c='g', label='True', s=4, alpha=0.2)
 plt.scatter(X_train.sum(dim=1), preds_train_km, c='r', label='Predicted', s=4, alpha=0.2)
 plt.title('Train')
-plt.xlim(-args.cycles*torch.pi/scale_factor, args.cycles*torch.pi/scale_factor)
+plt.xlim(-args.cycles*torch.pi, args.cycles*torch.pi)
 plt.ylim(-1.25, 1.25)
 plt.legend()
 
@@ -358,9 +390,9 @@ plt.subplot(122)
 plt.scatter(X_test.sum(dim=1), Y_test, c='g', label='True', s=4, alpha=0.2)
 plt.scatter(X_test.sum(dim=1), preds_test_km, c='r', label='Predicted', s=4, alpha=0.2)
 plt.title('Test')
-plt.xlim(-args.cycles*torch.pi/scale_factor, args.cycles*torch.pi/scale_factor)
+plt.xlim(-args.cycles*torch.pi, args.cycles*torch.pi)
 plt.ylim(-1.25, 1.25)
 plt.legend()
 
 plt.suptitle(f'SVM ({best_kernel})')
-plt.savefig(f'plots/hidden-function/svm-fit/{args.cycles}cycles_{args.mode}{"_corr" if args.corr else ""}')
+plt.savefig(svm_fit_plot_path)

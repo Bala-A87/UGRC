@@ -1,1 +1,1 @@
-{"score": -0.0032272953540086746, "depth": 0, "width": 4096, "activation": "relu", "eta": 1.0, "weight_decay": 0.0, "optimizer": "adadelta"}
+{"score": -0.007823373191058636, "width": 2048, "activation": "relu", "eta": 1.0, "weight_decay": 0.0}

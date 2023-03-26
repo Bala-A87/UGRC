@@ -1,1 +1,0 @@
-{"score": -0.5152294635772705, "depth": 0, "width": 2048, "activation": "tanh", "eta": 0.001, "weight_decay": 1.0, "optimizer": "adadelta"}

@@ -18,8 +18,10 @@ def add_log(log_str: str, file_name: str):
     with open(file_name, 'a') as f:
         f.write(log_str)
 
-log_path = Path('logs/')
+log_path = Path('logs/orthants-single-empty/')
 if not log_path.is_dir():
+    if not Path('logs/').is_dir():
+        os.mkdir('logs/')
     os.mkdir(log_path)
 
 device = 'cpu'
@@ -36,12 +38,16 @@ config = {
     'weight_decays': np.logspace(-5, 5, 11).tolist() + [0.0]
 }
 
-plot_path_str = f'plots/orthants-single-empty-centre_{args.centre}-{config["depth"]}'
+plot_path_str = f'plots/orthants-single-empty/centre_{args.centre}-{config["depth"]}/'
 plot_path = Path(plot_path_str)
 if not plot_path.is_dir():
+    if not Path('plots/orthants-single-empty/').is_dir():
+        if not Path('plots/').is_dir():
+            os.mkdir('plots/')
+        os.mkdir('plots/orthants-single-empty/')
     os.mkdir(plot_path)
 
-log_file = f'logs/orthants-single-empty-centre_{args.centre}-{config["depth"]}.txt'
+log_file = f'logs/orthants-single-empty/centre_{args.centre}-{config["depth"]}.txt'
 if Path(log_file).is_file():
     os.remove(log_file)
 
@@ -89,7 +95,7 @@ for i in range(128):
 add_log(f'Orthants neighboring the empty orthant are: {neighboring_orthants}\n', log_file)
 
 key_orthants = [ZERO_ORTHANT_INDEX, neighboring_orthants[0], list(set(range(128)) - set(neighboring_orthants+[ZERO_ORTHANT_INDEX]))[0]]
-key_orthants_types = ['empty', 'neigbor', 'random']
+key_orthants_types = ['empty', 'neighbor', 'random']
 
 X_empty_0 = X_val[Y_val.squeeze() == 0]
 X_empty_1 = X_val[Y_val.squeeze() == 1]
@@ -162,7 +168,7 @@ history = train_model(
 
 models = [model_0] + history['models']
 
-plot_train_history(history, save_file=plot_path_str+'/train_val_loss_score.png')
+plot_train_history(history, save_file=plot_path_str+'train_val_loss_score.png')
 
 def get_output_layer_features(model: SimpleNN, u: torch.Tensor) -> torch.Tensor:
     return model.hidden(model.input(u)).detach()
@@ -207,7 +213,7 @@ def plot_closest_distances(
         ax[1][1].set_title('Last, pos')
 
     plt.suptitle(f'Epoch {model_index}, red: neg, green: pos')
-    plt.savefig(f'{plot_path_str}/dists_{"init" if model_index==0 else "final"}_k_{k}.png')
+    plt.savefig(f'{plot_path_str}dists_{"init" if model_index==0 else "final"}_k_{k}.png')
 
 plot_closest_distances(0, 5)
 plot_closest_distances(-1, 5)
@@ -285,7 +291,7 @@ plt.title('SVM')
 
 plt.suptitle('Accuracy per orthant')
 
-plt.savefig(plot_path_str+'/accuracy_vs_counts.png')
+plt.savefig(plot_path_str+'accuracy_vs_counts.png')
 
 c_arr = np.zeros(128)
 c_arr[ZERO_ORTHANT_INDEX] = 2
@@ -313,7 +319,7 @@ plt.title("SVM (ntk)")
 
 plt.suptitle('Test accuracy vs orthant')
 
-plt.savefig(plot_path_str+'/accuracy_vs_orthant_number.png')
+plt.savefig(plot_path_str+'accuracy_vs_orthant_number.png')
 
 X_radial = torch.cat([torch.cat([generate_point(r, CENTRE, torch.ones(7)).unsqueeze(0) for _ in range(100)]).unsqueeze(0) for r in np.arange(0.5, 2.6, 0.1)])
 
@@ -326,7 +332,7 @@ for i in range(3):
     plt.ylim(0.0, 1.0)
     plt.title(key_orthants_types[i])
 plt.suptitle('Average predicted probability of class 1 vs radius, NN')
-plt.savefig(plot_path_str+'/nn_radial_decision_boundary.png')
+plt.savefig(plot_path_str+'nn_radial_decision_boundary.png')
 
 plt.figure(figsize=(20, 6))
 for i in range(3):
@@ -337,4 +343,4 @@ for i in range(3):
     plt.ylim(0.0, 1.0)
     plt.title(key_orthants_types[i])
 plt.suptitle('Average predicted probability (estimated) of class 1 vs radius, SVM')
-plt.savefig(plot_path_str+'/svm_radial_decision_boundary.png')
+plt.savefig(plot_path_str+'svm_radial_decision_boundary.png')

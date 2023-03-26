@@ -1,0 +1,18 @@
+X.shape == torch.Size([10000, 25])
+scale_factor == 0.6305994391441345
+Y.shape == torch.Size([10000, 1])
+X_train.shape == torch.Size([8000, 25]), Y_train.shape == torch.Size([8000, 1])
+X_val.shape == torch.Size([1000, 25]), Y_val.shape == torch.Size([1000, 1])
+X_test.shape == torch.Size([1000, 25]), Y_test.shape == torch.Size([1000, 1])
+
+Best validation score after 20 epochs: -0.007823. Best configuration:
+Width:2048, Actn.:relu, lr:1.0, w_d:0.0
+preds_train_nn.shape == torch.Size([8000, 1]), preds_val_nn.shape == torch.Size([1000, 1]), preds_test_nn.shape == torch.Size([1000, 1])
+score_train == -0.0013869014801457524, score_val == -0.0013050537090748549, score_test == -0.001209983485750854
+Best params for NTK: {'C': 1.0}
+Best score for NTK: -0.0009307809579055318
+Best params for RBF: {'C': 1.0, 'gamma': 1.0}
+Best score for RBF: -0.5042560755720574
+Best kernel: ntk
+preds_train_km.shape == (8000,), preds_val_km.shape == (1000,), preds_test_km.shape == (1000,)
+score_train == 7.126145059989983e-05, score_val == 0.0008167703887070497, score_test == 0.00022147674924372418
