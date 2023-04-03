@@ -1,1 +1,1 @@
-{"score": -0.006579277105629444, "width": 1024, "activation": "relu", "eta": 0.1, "weight_decay": 0.0}
+{"score": -0.002414194168522954, "width": 256, "activation": "relu", "eta": 1.0, "weight_decay": 0.0}

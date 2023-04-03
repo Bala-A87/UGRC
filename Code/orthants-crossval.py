@@ -13,6 +13,7 @@ from scripts.ntk import get_ntk_feature_matrix
 from scripts.test import predict
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score, make_scorer
+from sklearn.model_selection import train_test_split
 
 def add_log(log_str: str, file_name: str):
     with open(file_name, 'a') as f:
@@ -35,7 +36,7 @@ config = {
     'depth': args.depth,
     'widths': [32, 64, 128],
     'etas': [1e-4, 1e-3, 1e-2],
-    'weight_decays': np.logspace(-5, 5, 11).tolist() + [0.0]
+    'weight_decays': np.logspace(-4, 4, 9).tolist() + [0.0]
 }
 
 plot_path_str = f'plots/orthants-single-empty/centre_{args.centre}-{config["depth"]}/'
@@ -59,7 +60,7 @@ CENTRE = args.centre * torch.ones(7)
 LOW_RADIUS = 1.
 HIGH_RADIUS = 2.
 
-X_train, Y_train, orthant_counts = generate_train_data(
+X_training, Y_training, orthant_counts = generate_train_data(
     low_count=HIGH_COUNT,
     high_count=HIGH_COUNT,
     low_spread=0,
@@ -69,8 +70,11 @@ X_train, Y_train, orthant_counts = generate_train_data(
     centre=CENTRE,
     random_state=535
 )
+X_train, X_val, Y_train, Y_val = train_test_split(X_training, Y_training, test_size=0.2, random_state=375)
 add_log(f'X_train.shape == {X_train.shape}\n', log_file)
 add_log(f'Y_train.shape == {Y_train.shape}\n', log_file)
+add_log(f'X_val.shape == {X_val.shape}\n', log_file)
+add_log(f'Y_val.shape == {Y_val.shape}\n', log_file)
 
 for i in range(128):
     if orthant_counts[i] == 0:
@@ -81,7 +85,7 @@ X_test, Y_test = generate_test_data(TEST_COUNT, CENTRE, random_state=652)
 add_log(f'X_test.shape == {X_test.shape}\n', log_file)
 add_log(f'Y_test.shape == {Y_test.shape}\n', log_file)
 
-X_val, Y_val = X_test[ZERO_ORTHANT_INDEX], Y_test[ZERO_ORTHANT_INDEX]
+# X_val, Y_val = X_test[ZERO_ORTHANT_INDEX], Y_test[ZERO_ORTHANT_INDEX]
 
 train_dataloader, val_dataloader = make_dataloader(X_train, Y_train, 32, True), make_dataloader(X_val, Y_val, 32, True)
 
@@ -151,7 +155,7 @@ model_0 = best_model_nn.clone()
 loss_fn = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
 metric = BinaryAccuracy()
-early_stop = EarlyStopping(patience=20, min_delta=1e-4)
+early_stop = EarlyStopping(patience=50, min_delta=1e-4)
 
 history = train_model(
     model=best_model_nn,
@@ -219,8 +223,6 @@ plot_closest_distances(0, 5)
 plot_closest_distances(-1, 5)
 plot_closest_distances(0, 10)
 plot_closest_distances(-1, 10)
-plot_closest_distances(0, 20)
-plot_closest_distances(-1, 20)
 
 scores_nn = torch.tensor([
     metric(
@@ -235,7 +237,7 @@ add_log(f'Accuracy in empty orthant: {scores_nn[ZERO_ORTHANT_INDEX].mean()}\n', 
 X_train_ntk = get_ntk_feature_matrix(X_train, best_model_nn)
 X_val_ntk = get_ntk_feature_matrix(X_val, best_model_nn)
 
-Cs = np.logspace(-5, 5, 11)
+Cs = np.logspace(-4, 4, 9)
 best_C = None
 best_score = -torch.inf
 scorer = make_scorer(accuracy_score)
@@ -329,7 +331,7 @@ for i in range(3):
     X_dec_bound = X_radial * ORTHANTS[key_orthants[i]]
     proba_orthants = torch.tensor([predict(best_model_nn, X_r, device).mean() for X_r in X_dec_bound])
     plt.plot(np.arange(0.5, 2.6, 0.1), proba_orthants)
-    plt.ylim(0.0, 1.0)
+    plt.ylim(-0.05, 1.05)
     plt.title(key_orthants_types[i])
 plt.suptitle('Average predicted probability of class 1 vs radius, NN')
 plt.savefig(plot_path_str+'nn_radial_decision_boundary.png')
@@ -340,7 +342,7 @@ for i in range(3):
     X_dec_bound = X_radial * ORTHANTS[key_orthants[i]]
     proba_orthants = torch.tensor([np.mean(best_model_km.predict(get_ntk_feature_matrix(X_r, best_model_nn))) for X_r in X_dec_bound])
     plt.plot(np.arange(0.5, 2.6, 0.1), proba_orthants)
-    plt.ylim(0.0, 1.0)
+    plt.ylim(-0.05, 1.05)
     plt.title(key_orthants_types[i])
 plt.suptitle('Average predicted probability (estimated) of class 1 vs radius, SVM')
 plt.savefig(plot_path_str+'svm_radial_decision_boundary.png')

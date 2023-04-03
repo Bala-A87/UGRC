@@ -65,9 +65,10 @@ def add_log(log_str: str, file_name: Path = log_path) -> None:
         f.write(log_str+'\n')
 
 DATA_SIZE = 10000
-NUM_FEATURES = 25
+NUM_FEATURES = 100
 RANGE = 2
-POLY_SCALE = 2
+# POLY_SCALE = 2
+WARMUP = 1
 
 class SimpleNN(nn.Module):
     def __init__(self, width, activation, symmetric_init=True) -> None:
@@ -271,7 +272,7 @@ history = train_model(
     epochs=500,
     early_stopping=early_stop,
     strategy=args.mode,
-    warmup_epochs=5, # set to 1 or 2 or this is okay?
+    warmup_epochs=1, 
     device=device,
     return_models=True
 )
@@ -292,7 +293,7 @@ def plot_cosines(i):
     ax.set_xlabel('Weight number')
     ax.set_title(f'Epoch {i}')
 
-ani = FuncAnimation(fig, plot_cosines, frames = len(models), interval=1000/FPS, repeat=True)
+ani = FuncAnimation(fig, plot_cosines, frames=len(models) if args.mode=='reg' else 1+WARMUP, interval=1000/FPS, repeat=True)
 writer = FFMpegWriter(fps=FPS, bitrate=1800, metadata=dict(arist='Me'))
 
 ani.save(cosines_ani_path, writer=writer)

@@ -11,7 +11,8 @@ def get_grads(u, model: torch.nn.Module) -> torch.Tensor:
     Returns:
         grad (torch.Tensor): Gradient of model(u) wrt model.parameters() of size (1, num_params) where num_params = number of parameters in model
     """
-    return torch.cat([torch.reshape(grads, (-1,)) for grads in list(torch.autograd.grad(model(u), model.parameters()))]).reshape(1, -1)
+    params_w_grad = [param for param in model.parameters() if param.requires_grad]
+    return torch.cat([torch.reshape(grads, (-1,)) for grads in list(torch.autograd.grad(model(u), params_w_grad))]).reshape(1, -1)
 
 def get_ntk_feature_matrix(U, model: torch.nn.Module) -> torch.Tensor:
     """
