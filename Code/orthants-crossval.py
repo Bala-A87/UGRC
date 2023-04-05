@@ -101,8 +101,10 @@ add_log(f'Orthants neighboring the empty orthant are: {neighboring_orthants}\n',
 key_orthants = [ZERO_ORTHANT_INDEX, neighboring_orthants[0], list(set(range(128)) - set(neighboring_orthants+[ZERO_ORTHANT_INDEX]))[0]]
 key_orthants_types = ['empty', 'neighbor', 'random']
 
-X_empty_0 = X_val[Y_val.squeeze() == 0]
-X_empty_1 = X_val[Y_val.squeeze() == 1]
+X_empty = X_test[ZERO_ORTHANT_INDEX]
+Y_empty = Y_test[ZERO_ORTHANT_INDEX]
+X_empty_0 = X_empty[Y_empty.squeeze() == 0]
+X_empty_1 = X_empty[Y_empty.squeeze() == 1]
 add_log(f'X_empty_0.shape == {X_empty_0.shape}\n', log_file)
 add_log(f'X_empty_1.shape == {X_empty_1.shape}\n', log_file)
 

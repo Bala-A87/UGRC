@@ -1,142 +1,124 @@
-X_train.shape == torch.Size([25400, 7])
-Y_train.shape == torch.Size([25400, 1])
+X_train.shape == torch.Size([20320, 7])
+Y_train.shape == torch.Size([20320, 1])
+X_val.shape == torch.Size([5080, 7])
+Y_val.shape == torch.Size([5080, 1])
 Empty orthant is orthant number 99
 X_test.shape == torch.Size([128, 200, 7])
 Y_test.shape == torch.Size([128, 200, 1])
 Orthants neighboring the empty orthant are: [35, 67, 97, 98, 103, 107, 115]
 X_empty_0.shape == torch.Size([100, 7])
 X_empty_1.shape == torch.Size([100, 7])
-Cross-validating across 108 models.
+Cross-validating across 90 models.
 
-[1/108] Width: 32, lr: 0.0001, lambda: 1e-05 ==> score: 0.500000
-[2/108] Width: 32, lr: 0.0001, lambda: 0.0001 ==> score: 0.513393
-[3/108] Width: 32, lr: 0.0001, lambda: 0.001 ==> score: 0.500000
-[4/108] Width: 32, lr: 0.0001, lambda: 0.01 ==> score: 0.526786
-[5/108] Width: 32, lr: 0.0001, lambda: 0.1 ==> score: 0.500000
-[6/108] Width: 32, lr: 0.0001, lambda: 1.0 ==> score: 0.500000
-[7/108] Width: 32, lr: 0.0001, lambda: 10.0 ==> score: 0.486607
-[8/108] Width: 32, lr: 0.0001, lambda: 100.0 ==> score: 0.526786
-[9/108] Width: 32, lr: 0.0001, lambda: 1000.0 ==> score: 0.526786
-[10/108] Width: 32, lr: 0.0001, lambda: 10000.0 ==> score: 0.500000
-[11/108] Width: 32, lr: 0.0001, lambda: 100000.0 ==> score: 0.513393
-[12/108] Width: 32, lr: 0.0001, lambda: 0.0 ==> score: 0.441964
-[13/108] Width: 32, lr: 0.001, lambda: 1e-05 ==> score: 0.638393
-[14/108] Width: 32, lr: 0.001, lambda: 0.0001 ==> score: 0.500000
-[15/108] Width: 32, lr: 0.001, lambda: 0.001 ==> score: 0.513393
-[16/108] Width: 32, lr: 0.001, lambda: 0.01 ==> score: 0.513393
-[17/108] Width: 32, lr: 0.001, lambda: 0.1 ==> score: 0.500000
-[18/108] Width: 32, lr: 0.001, lambda: 1.0 ==> score: 0.486607
-[19/108] Width: 32, lr: 0.001, lambda: 10.0 ==> score: 0.500000
-[20/108] Width: 32, lr: 0.001, lambda: 100.0 ==> score: 0.486607
-[21/108] Width: 32, lr: 0.001, lambda: 1000.0 ==> score: 0.473214
-[22/108] Width: 32, lr: 0.001, lambda: 10000.0 ==> score: 0.513393
-[23/108] Width: 32, lr: 0.001, lambda: 100000.0 ==> score: 0.500000
-[24/108] Width: 32, lr: 0.001, lambda: 0.0 ==> score: 0.495536
-[25/108] Width: 32, lr: 0.01, lambda: 1e-05 ==> score: 0.473214
-[26/108] Width: 32, lr: 0.01, lambda: 0.0001 ==> score: 0.500000
-[27/108] Width: 32, lr: 0.01, lambda: 0.001 ==> score: 0.513393
-[28/108] Width: 32, lr: 0.01, lambda: 0.01 ==> score: 0.500000
-[29/108] Width: 32, lr: 0.01, lambda: 0.1 ==> score: 0.486607
-[30/108] Width: 32, lr: 0.01, lambda: 1.0 ==> score: 0.513393
-[31/108] Width: 32, lr: 0.01, lambda: 10.0 ==> score: 0.513393
-[32/108] Width: 32, lr: 0.01, lambda: 100.0 ==> score: 0.486607
-[33/108] Width: 32, lr: 0.01, lambda: 1000.0 ==> score: 0.526786
-[34/108] Width: 32, lr: 0.01, lambda: 10000.0 ==> score: 0.500000
-[35/108] Width: 32, lr: 0.01, lambda: 100000.0 ==> score: 0.486607
-[36/108] Width: 32, lr: 0.01, lambda: 0.0 ==> score: 0.500000
-[37/108] Width: 64, lr: 0.0001, lambda: 1e-05 ==> score: 0.473214
-[38/108] Width: 64, lr: 0.0001, lambda: 0.0001 ==> score: 0.513393
-[39/108] Width: 64, lr: 0.0001, lambda: 0.001 ==> score: 0.500000
-[40/108] Width: 64, lr: 0.0001, lambda: 0.01 ==> score: 0.486607
-[41/108] Width: 64, lr: 0.0001, lambda: 0.1 ==> score: 0.486607
-[42/108] Width: 64, lr: 0.0001, lambda: 1.0 ==> score: 0.500000
-[43/108] Width: 64, lr: 0.0001, lambda: 10.0 ==> score: 0.486607
-[44/108] Width: 64, lr: 0.0001, lambda: 100.0 ==> score: 0.513393
-[45/108] Width: 64, lr: 0.0001, lambda: 1000.0 ==> score: 0.513393
-[46/108] Width: 64, lr: 0.0001, lambda: 10000.0 ==> score: 0.500000
-[47/108] Width: 64, lr: 0.0001, lambda: 100000.0 ==> score: 0.526786
-[48/108] Width: 64, lr: 0.0001, lambda: 0.0 ==> score: 0.500000
-[49/108] Width: 64, lr: 0.001, lambda: 1e-05 ==> score: 0.709821
-[50/108] Width: 64, lr: 0.001, lambda: 0.0001 ==> score: 0.415179
-[51/108] Width: 64, lr: 0.001, lambda: 0.001 ==> score: 0.513393
-[52/108] Width: 64, lr: 0.001, lambda: 0.01 ==> score: 0.473214
-[53/108] Width: 64, lr: 0.001, lambda: 0.1 ==> score: 0.486607
-[54/108] Width: 64, lr: 0.001, lambda: 1.0 ==> score: 0.486607
-[55/108] Width: 64, lr: 0.001, lambda: 10.0 ==> score: 0.513393
-[56/108] Width: 64, lr: 0.001, lambda: 100.0 ==> score: 0.473214
-[57/108] Width: 64, lr: 0.001, lambda: 1000.0 ==> score: 0.486607
-[58/108] Width: 64, lr: 0.001, lambda: 10000.0 ==> score: 0.486607
-[59/108] Width: 64, lr: 0.001, lambda: 100000.0 ==> score: 0.500000
-[60/108] Width: 64, lr: 0.001, lambda: 0.0 ==> score: 0.415179
-[61/108] Width: 64, lr: 0.01, lambda: 1e-05 ==> score: 0.513393
-[62/108] Width: 64, lr: 0.01, lambda: 0.0001 ==> score: 0.486607
-[63/108] Width: 64, lr: 0.01, lambda: 0.001 ==> score: 0.540179
-[64/108] Width: 64, lr: 0.01, lambda: 0.01 ==> score: 0.513393
-[65/108] Width: 64, lr: 0.01, lambda: 0.1 ==> score: 0.486607
-[66/108] Width: 64, lr: 0.01, lambda: 1.0 ==> score: 0.486607
-[67/108] Width: 64, lr: 0.01, lambda: 10.0 ==> score: 0.473214
-[68/108] Width: 64, lr: 0.01, lambda: 100.0 ==> score: 0.486607
-[69/108] Width: 64, lr: 0.01, lambda: 1000.0 ==> score: 0.500000
-[70/108] Width: 64, lr: 0.01, lambda: 10000.0 ==> score: 0.540179
-[71/108] Width: 64, lr: 0.01, lambda: 100000.0 ==> score: 0.500000
-[72/108] Width: 64, lr: 0.01, lambda: 0.0 ==> score: 0.500000
-[73/108] Width: 128, lr: 0.0001, lambda: 1e-05 ==> score: 0.482143
-[74/108] Width: 128, lr: 0.0001, lambda: 0.0001 ==> score: 0.486607
-[75/108] Width: 128, lr: 0.0001, lambda: 0.001 ==> score: 0.500000
-[76/108] Width: 128, lr: 0.0001, lambda: 0.01 ==> score: 0.500000
-[77/108] Width: 128, lr: 0.0001, lambda: 0.1 ==> score: 0.473214
-[78/108] Width: 128, lr: 0.0001, lambda: 1.0 ==> score: 0.459821
-[79/108] Width: 128, lr: 0.0001, lambda: 10.0 ==> score: 0.500000
-[80/108] Width: 128, lr: 0.0001, lambda: 100.0 ==> score: 0.500000
-[81/108] Width: 128, lr: 0.0001, lambda: 1000.0 ==> score: 0.486607
-[82/108] Width: 128, lr: 0.0001, lambda: 10000.0 ==> score: 0.500000
-[83/108] Width: 128, lr: 0.0001, lambda: 100000.0 ==> score: 0.500000
-[84/108] Width: 128, lr: 0.0001, lambda: 0.0 ==> score: 0.500000
-[85/108] Width: 128, lr: 0.001, lambda: 1e-05 ==> score: 0.419643
-[86/108] Width: 128, lr: 0.001, lambda: 0.0001 ==> score: 0.486607
-[87/108] Width: 128, lr: 0.001, lambda: 0.001 ==> score: 0.500000
-[88/108] Width: 128, lr: 0.001, lambda: 0.01 ==> score: 0.473214
-[89/108] Width: 128, lr: 0.001, lambda: 0.1 ==> score: 0.513393
-[90/108] Width: 128, lr: 0.001, lambda: 1.0 ==> score: 0.500000
-[91/108] Width: 128, lr: 0.001, lambda: 10.0 ==> score: 0.500000
-[92/108] Width: 128, lr: 0.001, lambda: 100.0 ==> score: 0.486607
-[93/108] Width: 128, lr: 0.001, lambda: 1000.0 ==> score: 0.526786
-[94/108] Width: 128, lr: 0.001, lambda: 10000.0 ==> score: 0.500000
-[95/108] Width: 128, lr: 0.001, lambda: 100000.0 ==> score: 0.500000
-[96/108] Width: 128, lr: 0.001, lambda: 0.0 ==> score: 0.500000
-[97/108] Width: 128, lr: 0.01, lambda: 1e-05 ==> score: 0.513393
-[98/108] Width: 128, lr: 0.01, lambda: 0.0001 ==> score: 0.486607
-[99/108] Width: 128, lr: 0.01, lambda: 0.001 ==> score: 0.500000
-[100/108] Width: 128, lr: 0.01, lambda: 0.01 ==> score: 0.486607
-[101/108] Width: 128, lr: 0.01, lambda: 0.1 ==> score: 0.513393
-[102/108] Width: 128, lr: 0.01, lambda: 1.0 ==> score: 0.513393
-[103/108] Width: 128, lr: 0.01, lambda: 10.0 ==> score: 0.513393
-[104/108] Width: 128, lr: 0.01, lambda: 100.0 ==> score: 0.486607
-[105/108] Width: 128, lr: 0.01, lambda: 1000.0 ==> score: 0.473214
-[106/108] Width: 128, lr: 0.01, lambda: 10000.0 ==> score: 0.500000
-[107/108] Width: 128, lr: 0.01, lambda: 100000.0 ==> score: 0.500000
-[108/108] Width: 128, lr: 0.01, lambda: 0.0 ==> score: 0.473214
+[1/90] Width: 32, lr: 0.0001, lambda: 0.0001 ==> score: 0.504914
+[2/90] Width: 32, lr: 0.0001, lambda: 0.001 ==> score: 0.484146
+[3/90] Width: 32, lr: 0.0001, lambda: 0.01 ==> score: 0.492925
+[4/90] Width: 32, lr: 0.0001, lambda: 0.1 ==> score: 0.492531
+[5/90] Width: 32, lr: 0.0001, lambda: 1.0 ==> score: 0.492728
+[6/90] Width: 32, lr: 0.0001, lambda: 10.0 ==> score: 0.506813
+[7/90] Width: 32, lr: 0.0001, lambda: 100.0 ==> score: 0.492925
+[8/90] Width: 32, lr: 0.0001, lambda: 1000.0 ==> score: 0.492597
+[9/90] Width: 32, lr: 0.0001, lambda: 10000.0 ==> score: 0.507338
+[10/90] Width: 32, lr: 0.0001, lambda: 0.0 ==> score: 0.501245
+[11/90] Width: 32, lr: 0.001, lambda: 0.0001 ==> score: 0.555949
+[12/90] Width: 32, lr: 0.001, lambda: 0.001 ==> score: 0.507403
+[13/90] Width: 32, lr: 0.001, lambda: 0.01 ==> score: 0.507272
+[14/90] Width: 32, lr: 0.001, lambda: 0.1 ==> score: 0.492925
+[15/90] Width: 32, lr: 0.001, lambda: 1.0 ==> score: 0.507075
+[16/90] Width: 32, lr: 0.001, lambda: 10.0 ==> score: 0.506944
+[17/90] Width: 32, lr: 0.001, lambda: 100.0 ==> score: 0.492597
+[18/90] Width: 32, lr: 0.001, lambda: 1000.0 ==> score: 0.507469
+[19/90] Width: 32, lr: 0.001, lambda: 10000.0 ==> score: 0.506879
+[20/90] Width: 32, lr: 0.001, lambda: 0.0 ==> score: 0.605084
+[21/90] Width: 32, lr: 0.01, lambda: 0.0001 ==> score: 0.492335
+[22/90] Width: 32, lr: 0.01, lambda: 0.001 ==> score: 0.507534
+[23/90] Width: 32, lr: 0.01, lambda: 0.01 ==> score: 0.507206
+[24/90] Width: 32, lr: 0.01, lambda: 0.1 ==> score: 0.492662
+[25/90] Width: 32, lr: 0.01, lambda: 1.0 ==> score: 0.492925
+[26/90] Width: 32, lr: 0.01, lambda: 10.0 ==> score: 0.492597
+[27/90] Width: 32, lr: 0.01, lambda: 100.0 ==> score: 0.507141
+[28/90] Width: 32, lr: 0.01, lambda: 1000.0 ==> score: 0.492466
+[29/90] Width: 32, lr: 0.01, lambda: 10000.0 ==> score: 0.492925
+[30/90] Width: 32, lr: 0.01, lambda: 0.0 ==> score: 0.492859
+[31/90] Width: 64, lr: 0.0001, lambda: 0.0001 ==> score: 0.534526
+[32/90] Width: 64, lr: 0.0001, lambda: 0.001 ==> score: 0.489190
+[33/90] Width: 64, lr: 0.0001, lambda: 0.01 ==> score: 0.492662
+[34/90] Width: 64, lr: 0.0001, lambda: 0.1 ==> score: 0.492662
+[35/90] Width: 64, lr: 0.0001, lambda: 1.0 ==> score: 0.492925
+[36/90] Width: 64, lr: 0.0001, lambda: 10.0 ==> score: 0.507403
+[37/90] Width: 64, lr: 0.0001, lambda: 100.0 ==> score: 0.492662
+[38/90] Width: 64, lr: 0.0001, lambda: 1000.0 ==> score: 0.507206
+[39/90] Width: 64, lr: 0.0001, lambda: 10000.0 ==> score: 0.492662
+[40/90] Width: 64, lr: 0.0001, lambda: 0.0 ==> score: 0.530726
+[41/90] Width: 64, lr: 0.001, lambda: 0.0001 ==> score: 0.517689
+[42/90] Width: 64, lr: 0.001, lambda: 0.001 ==> score: 0.493252
+[43/90] Width: 64, lr: 0.001, lambda: 0.01 ==> score: 0.492728
+[44/90] Width: 64, lr: 0.001, lambda: 0.1 ==> score: 0.492793
+[45/90] Width: 64, lr: 0.001, lambda: 1.0 ==> score: 0.492531
+[46/90] Width: 64, lr: 0.001, lambda: 10.0 ==> score: 0.507403
+[47/90] Width: 64, lr: 0.001, lambda: 100.0 ==> score: 0.507141
+[48/90] Width: 64, lr: 0.001, lambda: 1000.0 ==> score: 0.492925
+[49/90] Width: 64, lr: 0.001, lambda: 10000.0 ==> score: 0.492662
+[50/90] Width: 64, lr: 0.001, lambda: 0.0 ==> score: 0.639413
+[51/90] Width: 64, lr: 0.01, lambda: 0.0001 ==> score: 0.507338
+[52/90] Width: 64, lr: 0.01, lambda: 0.001 ==> score: 0.492597
+[53/90] Width: 64, lr: 0.01, lambda: 0.01 ==> score: 0.507469
+[54/90] Width: 64, lr: 0.01, lambda: 0.1 ==> score: 0.507141
+[55/90] Width: 64, lr: 0.01, lambda: 1.0 ==> score: 0.507469
+[56/90] Width: 64, lr: 0.01, lambda: 10.0 ==> score: 0.492597
+[57/90] Width: 64, lr: 0.01, lambda: 100.0 ==> score: 0.492531
+[58/90] Width: 64, lr: 0.01, lambda: 1000.0 ==> score: 0.492728
+[59/90] Width: 64, lr: 0.01, lambda: 10000.0 ==> score: 0.492662
+[60/90] Width: 64, lr: 0.01, lambda: 0.0 ==> score: 0.507206
+[61/90] Width: 128, lr: 0.0001, lambda: 0.0001 ==> score: 0.528171
+[62/90] Width: 128, lr: 0.0001, lambda: 0.001 ==> score: 0.492728
+[63/90] Width: 128, lr: 0.0001, lambda: 0.01 ==> score: 0.492662
+[64/90] Width: 128, lr: 0.0001, lambda: 0.1 ==> score: 0.492793
+[65/90] Width: 128, lr: 0.0001, lambda: 1.0 ==> score: 0.492793
+[66/90] Width: 128, lr: 0.0001, lambda: 10.0 ==> score: 0.492728
+[67/90] Width: 128, lr: 0.0001, lambda: 100.0 ==> score: 0.492662
+[68/90] Width: 128, lr: 0.0001, lambda: 1000.0 ==> score: 0.492662
+[69/90] Width: 128, lr: 0.0001, lambda: 10000.0 ==> score: 0.492597
+[70/90] Width: 128, lr: 0.0001, lambda: 0.0 ==> score: 0.578027
+[71/90] Width: 128, lr: 0.001, lambda: 0.0001 ==> score: 0.505700
+[72/90] Width: 128, lr: 0.001, lambda: 0.001 ==> score: 0.492728
+[73/90] Width: 128, lr: 0.001, lambda: 0.01 ==> score: 0.492925
+[74/90] Width: 128, lr: 0.001, lambda: 0.1 ==> score: 0.492793
+[75/90] Width: 128, lr: 0.001, lambda: 1.0 ==> score: 0.492531
+[76/90] Width: 128, lr: 0.001, lambda: 10.0 ==> score: 0.492728
+[77/90] Width: 128, lr: 0.001, lambda: 100.0 ==> score: 0.492793
+[78/90] Width: 128, lr: 0.001, lambda: 1000.0 ==> score: 0.492859
+[79/90] Width: 128, lr: 0.001, lambda: 10000.0 ==> score: 0.492728
+[80/90] Width: 128, lr: 0.001, lambda: 0.0 ==> score: 0.495021
+[81/90] Width: 128, lr: 0.01, lambda: 0.0001 ==> score: 0.492990
+[82/90] Width: 128, lr: 0.01, lambda: 0.001 ==> score: 0.492662
+[83/90] Width: 128, lr: 0.01, lambda: 0.01 ==> score: 0.492793
+[84/90] Width: 128, lr: 0.01, lambda: 0.1 ==> score: 0.492859
+[85/90] Width: 128, lr: 0.01, lambda: 1.0 ==> score: 0.507403
+[86/90] Width: 128, lr: 0.01, lambda: 10.0 ==> score: 0.507403
+[87/90] Width: 128, lr: 0.01, lambda: 100.0 ==> score: 0.492466
+[88/90] Width: 128, lr: 0.01, lambda: 1000.0 ==> score: 0.507272
+[89/90] Width: 128, lr: 0.01, lambda: 10000.0 ==> score: 0.492597
+[90/90] Width: 128, lr: 0.01, lambda: 0.0 ==> score: 0.507141
 
-Best validation score after 10 epochs: 0.709821
-Best configuration: width: 64, lr: 0.001, lambda: 1e-05
-Average accuracy across all orthants: 0.9633203744888306
-Accuracy in empty orthant: 0.949999988079071
-Cross-validation across 11 models.
+Best validation score after 10 epochs: 0.639413
+Best configuration: width: 64, lr: 0.001, lambda: 0.0
+Average accuracy across all orthants: 0.9566406011581421
+Accuracy in empty orthant: 0.7699999809265137
+Cross-validation across 9 models.
 
-[1/11]	C:1e-05, train score:0.6577952755905512, val score:0.62
-[2/11]	C:0.0001, train score:0.6446850393700787, val score:0.655
-[3/11]	C:0.001, train score:0.6839763779527559, val score:0.75
-[4/11]	C:0.01, train score:0.7569685039370079, val score:0.815
-[5/11]	C:0.1, train score:0.8292913385826771, val score:0.86
-[6/11]	C:1.0, train score:0.8860629921259843, val score:0.905
-[7/11]	C:10.0, train score:0.9326377952755905, val score:0.915
-[8/11]	C:100.0, train score:0.9609448818897638, val score:0.925
-[9/11]	C:1000.0, train score:0.9658661417322835, val score:0.9
-[10/11]	C:10000.0, train score:0.9655905511811024, val score:0.89
-[11/11]	C:100000.0, train score:0.9679527559055118, val score:0.895
+[1/9]	C:0.0001, train score:0.6104330708661417, val score:0.606496062992126
+[2/9]	C:0.001, train score:0.6183562992125984, val score:0.6131889763779528
+[3/9]	C:0.01, train score:0.6374507874015748, val score:0.6269685039370079
+[4/9]	C:0.1, train score:0.6732775590551181, val score:0.656496062992126
+[5/9]	C:1.0, train score:0.7175688976377953, val score:0.6968503937007874
+[6/9]	C:10.0, train score:0.7629429133858268, val score:0.7417322834645669
+[7/9]	C:100.0, train score:0.8063484251968503, val score:0.7781496062992126
+[8/9]	C:1000.0, train score:0.7906003937007874, val score:0.7649606299212598
+[9/9]	C:10000.0, train score:0.6120078740157481, val score:0.5952755905511811
 
-Best validation accuracy: 0.925, for C = 100.0
-Train accuracy with NTK: 0.9672834645669292
-Validation accuracy with NTK: 0.935
-Average accuracy across all orthants: 0.9316796875
-Accuracy in empty orthant: 0.935
+Best validation accuracy: 0.7781496062992126, for C = 100.0
+Train accuracy with NTK: 0.8072834645669291
+Validation accuracy with NTK: 0.7773622047244094
+Average accuracy across all orthants: 0.7662890625000001
+Accuracy in empty orthant: 0.405
