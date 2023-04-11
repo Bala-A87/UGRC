@@ -125,7 +125,7 @@ def train_model(
         if verbose >= 2:
             print(f'Epoch: {epoch} => Train loss: {train_loss:.6f}, Train score: {train_score:.6f}, Val loss: {val_loss:.6f}, Val score: {val_score:.6f}')
         
-        if early_stopping is not None:
+        if early_stopping is not None and epoch > 0:
             stop = early_stopping.check_stop(epoch=epoch+1, loss=val_loss, weights=model.state_dict())
             if stop:
                 if not(stop == True):
