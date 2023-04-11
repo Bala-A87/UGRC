@@ -71,17 +71,12 @@ RANGE = 2
 WARMUP = 1
 
 class SimpleNN(nn.Module):
-    def __init__(self, width, activation, symmetric_init=True) -> None:
+    def __init__(self, width, symmetric_init=True) -> None:
         super().__init__()
         self.width = width
-        self.activation = activation
         self.input = nn.Sequential(
-            nn.Linear(in_features=NUM_FEATURES, out_features=100),
-            activation()
-        )
-        self.hidden = nn.Sequential(
-            nn.Linear(in_features=100, out_features=width),
-            activation()
+            nn.Linear(in_features=NUM_FEATURES, out_features=width),
+            nn.ReLU()
         )
         if symmetric_init:
             for param in self.parameters():
@@ -93,7 +88,7 @@ class SimpleNN(nn.Module):
         )
 
     def forward(self, x):
-        return self.output(self.hidden(self.input(x)))
+        return self.output(self.input(x))
     
     def clone(self):
         new_model = SimpleNN(self.width, self.activation)
@@ -105,21 +100,14 @@ class SimpleNN(nn.Module):
             param.requires_grad = False
         
     def freeze_last(self) -> None:
-        for param in self.hidden.parameters():
-            param.requires_grad = False
         for param in self.output.parameters():
-            param.requires_grad = False
+            param.requires_grad_(False)
     
     def revive_last(self) -> None:
-        for param in self.hidden.parameters():
-            param.requires_grad = True
         for param in self.output.parameters():
-            param.requires_grad = True
+            param.requires_grad_(True)
     
     def reinit_last(self) -> None:
-        for child in self.hidden.children():
-            if hasattr(child, 'reset_parameters'):
-                child.reset_parameters()
         for child in self.output.children():
             if hasattr(child, 'reset_parameters'):
                 child.reset_parameters()
@@ -142,13 +130,13 @@ Y = torch.ones_like(X_sum)
 for root in roots:
     Y *= (X_sum - root)
 Y.unsqueeze_(1)
-Y_max = Y.abs().max()
+# Y_max = Y.abs().max()
 # Y *= POLY_SCALE / Y_max
-Y += torch.randn_like(Y) * 0.01
+# Y += torch.randn_like(Y) * 0.01
 add_log(f'Y.shape == {Y.shape}')
 
-X_training, X_test, Y_training, Y_test = train_test_split(X, Y, test_size=1000, random_state=13)
-X_train, X_val, Y_train, Y_val = train_test_split(X_training, Y_training, test_size=1000, random_state=9173)
+X_training, X_test, Y_training, Y_test = train_test_split(X, Y, test_size=0.1, random_state=13)
+X_train, X_val, Y_train, Y_val = train_test_split(X_training, Y_training, test_size=1/9, random_state=9173)
 add_log(f'X_train.shape == {X_train.shape}, Y_train.shape == {Y_train.shape}')
 add_log(f'X_val.shape == {X_val.shape}, Y_val.shape == {Y_val.shape}')
 add_log(f'X_test.shape == {X_test.shape}, Y_test.shape == {Y_test.shape}')
@@ -173,12 +161,8 @@ def get_cosine_angles(model: SimpleNN, ref_vector: torch.Tensor = torch.ones(NUM
     weights = next(model.input.parameters()).detach()
     return torch.tensor([torch.dot(weight, ref_vector) / (torch.linalg.norm(ref_vector) * torch.linalg.norm(weight)) for weight in weights])
 
-# For NN crossval, just load config based on 4 combos from deg and corr
-# If config absent, have to do crossval
-# SVM crossval has to be done anyway
-
 widths = [128, 256, 512, 1024]
-activations = ['relu', 'tanh']
+# activations = ['relu'] # change slightly to accept only relu
 etas = [1e-3, 1e-2, 1e-1, 1.]
 weight_decays = np.logspace(-4, 2, 7).tolist() + [0.0]
 
@@ -187,7 +171,7 @@ if config_file.is_file():
     with open(config_file, 'r') as f:
         best_config = json.load(f)
     best_width = best_config['width']
-    best_activation = best_config['activation']
+    # best_activation = best_config['activation']
     best_eta = best_config['eta']
     best_weight_decay = best_config['weight_decay']
     best_score = best_config['score']
@@ -200,11 +184,11 @@ else:
         os.mkdir('configs/nn/hidden-func-poly/')
     best_score = -torch.inf
     best_width = None
-    best_activation = None
+    # best_activation = None
     best_eta = None
     best_weight_decay = None
 
-total_count = len(widths) * len(activations) * len(etas) * len(weight_decays)
+total_count = len(widths) * len(etas) * len(weight_decays)
 curr_count = 0
 EPOCHS = 20
 
@@ -212,37 +196,33 @@ if best_width is None:
     add_log(f'Cross-validating across {total_count} models.')
 
     for width in widths:
-        for activation in activations:
-            for eta in etas:
-                for weight_decay in weight_decays:
-                    curr_count += 1
-                    torch.random.manual_seed(47647)
-                    activation_fn = torch.nn.ReLU if activation == 'relu' else torch.nn.Tanh
-                    model = SimpleNN(width, activation_fn).to(device)
-                    optimizer = torch.optim.Adadelta(params=model.parameters(), lr=eta, weight_decay=weight_decay)
-                    history = train_model(
-                        model=model,
-                        train_dataloader=train_dataloader,
-                        val_dataloader=val_dataloader,
-                        loss_fn=torch.nn.L1Loss(),
-                        optimizer=optimizer,
-                        metric=NegMeanSquaredError(),
-                        epochs=EPOCHS,
-                        verbose=0,
-                        device=device
-                    )
-                    curr_score = history['val_score'][-1]
-                    if curr_score > best_score:
-                        best_score = curr_score
-                        best_width = width
-                        best_activation = activation
-                        best_eta = eta
-                        best_weight_decay = weight_decay
-                    add_log(f'[{curr_count}/{total_count}]\tWidth:{width}, Actn.:{activation}, lr:{eta}, w_d:{weight_decay} => Score:{curr_score:.6f}')
+        for eta in etas:
+            for weight_decay in weight_decays:
+                curr_count += 1
+                torch.random.manual_seed(47647)
+                model = SimpleNN(width).to(device)
+                optimizer = torch.optim.SGD(params=model.parameters(), lr=eta, weight_decay=weight_decay)
+                history = train_model(
+                    model=model,
+                    train_dataloader=train_dataloader,
+                    val_dataloader=val_dataloader,
+                    loss_fn=torch.nn.MSELoss(),
+                    optimizer=optimizer,
+                    metric=NegMeanSquaredError(),
+                    epochs=EPOCHS,
+                    verbose=0,
+                    device=device
+                )
+                curr_score = history['val_score'][-1]
+                if curr_score > best_score:
+                    best_score = curr_score
+                    best_width = width
+                    best_eta = eta
+                    best_weight_decay = weight_decay
+                add_log(f'[{curr_count}/{total_count}]\tWidth:{width}, lr:{eta}, w_d:{weight_decay} => Score:{curr_score:.6f}')
     best_config = {
         'score': float(best_score),
         'width': best_width,
-        'activation': best_activation,
         'eta': best_eta,
         'weight_decay': best_weight_decay,
     }
@@ -250,15 +230,14 @@ if best_width is None:
         json.dump(best_config, f)
 
 add_log(f'\nBest validation score after {EPOCHS} epochs: {best_score:.6f}. Best configuration:')
-add_log(f'Width:{best_width}, Actn.:{best_activation}, lr:{best_eta}, w_d:{best_weight_decay}')
+add_log(f'Width:{best_width}, lr:{best_eta}, w_d:{best_weight_decay}')
 
 torch.random.manual_seed(47647)
-best_activation_fn = torch.nn.ReLU if best_activation == 'relu' else torch.nn.Tanh
-best_model_nn = SimpleNN(best_width, best_activation_fn).to(device)
+best_model_nn = SimpleNN(best_width).to(device)
 model_0 = best_model_nn.clone()
 
-loss_fn = torch.nn.L1Loss()
-optimizer = torch.optim.Adadelta(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
+loss_fn = torch.nn.MSELoss()
+optimizer = torch.optim.SGD(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
 metric = NegMeanSquaredError()
 early_stop = EarlyStopping(patience=50, min_delta=1e-4)
 
@@ -297,9 +276,6 @@ ani = FuncAnimation(fig, plot_cosines, frames=len(models) if args.mode=='reg' el
 writer = FFMpegWriter(fps=FPS, bitrate=1800, metadata=dict(arist='Me'))
 
 ani.save(cosines_ani_path, writer=writer)
-"""
-IS THE ANIMATION REALLY REQUIRED WHEN WE ARE USING WARMUP TRAINING METHODS? I DON'T THINK SO
-"""
 
 preds_train_nn, preds_val_nn, preds_test_nn = predict(best_model_nn, X_train, device), predict(best_model_nn, X_val, device), predict(best_model_nn, X_test, device)
 add_log(f'preds_train_nn.shape == {preds_train_nn.shape}, preds_val_nn.shape == {preds_val_nn.shape}, preds_test_nn.shape == {preds_test_nn.shape}')
@@ -340,9 +316,7 @@ params_ntk = {
     'C': np.logspace(-4, 2, 7)
 }
 
-gammas = np.logspace(-4, 4, 9).tolist()
-gammas.append('scale')
-gammas.append('auto')
+gammas = np.logspace(-4, 4, 9).tolist() + ['scale', 'auto']
 model_base_rbf = SVR(kernel='rbf', max_iter=int(1e4))
 params_rbf = {
     'C': np.logspace(-4, 2, 7),
