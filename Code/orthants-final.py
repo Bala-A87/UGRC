@@ -149,18 +149,18 @@ X_empty_1 = X_empty[Y_empty.squeeze() == 1]
 radial_range = np.arange(0.5, 2.6, 0.1)
 X_radial = torch.cat([torch.cat([generate_point(r, CENTRE, torch.ones(7)).unsqueeze(0) for _ in range(100)]).unsqueeze(0) for r in radial_range])
 
-orthant_scores_nn = [None]*RUNS
-orthant_scores_km_ntk = [None]*RUNS
-orthant_scores_km_rbf = [None]*RUNS
-orthant_scores_km_lin = [None]*RUNS
-match_fracs_0_init = [None]*RUNS
-match_fracs_1_init = [None]*RUNS
-match_fracs_0_final = [None]*RUNS
-match_fracs_1_final = [None]*RUNS
-rad_probas_nn = [[None]*RUNS] * len(key_orthants)
-rad_probas_km_ntk = [[None]*RUNS] * len(key_orthants)
-rad_probas_km_rbf = [[None]*RUNS] * len(key_orthants)
-rad_probas_km_lin = [[None]*RUNS] * len(key_orthants)
+orthant_scores_nn = np.zeros((RUNS,)).tolist()
+orthant_scores_km_ntk = np.zeros((RUNS,)).tolist()
+orthant_scores_km_rbf = np.zeros((RUNS,)).tolist()
+orthant_scores_km_lin = np.zeros((RUNS,)).tolist()
+match_fracs_0_init = np.zeros((RUNS,)).tolist()
+match_fracs_1_init = np.zeros((RUNS,)).tolist()
+match_fracs_0_final = np.zeros((RUNS,)).tolist()
+match_fracs_1_final = np.zeros((RUNS,)).tolist()
+rad_probas_nn = np.zeros((len(key_orthants), RUNS)).tolist()
+rad_probas_km_ntk = np.zeros((len(key_orthants), RUNS)).tolist()
+rad_probas_km_rbf = np.zeros((len(key_orthants), RUNS)).tolist()
+rad_probas_km_lin = np.zeros((len(key_orthants), RUNS)).tolist()
 
 
 for run in range(RUNS):
@@ -290,28 +290,13 @@ for run in range(RUNS):
 
     if args.pure:
         if best_params_km_rbf['C'] is None:
-            # total_count = len(params_km_rbf['Cs']) * len(params_km_rbf['gammas'])
-            # curr_count = 0
-            # add_log(f'Cross-validation across {total_count} models.\n')
-            # for C in params_km_rbf['Cs']:
-            #     for gamma in params_km_rbf['gammas']:
-            #         curr_count += 1
-            #         model = SVC(C=C, kernel='rbf', gamma=gamma, max_iter=int(1e4))
-            #         model.fit(X_train, Y_train.squeeze())
-            #         preds_train, preds_val = model.predict(X_train), model.predict(X_val)
-            #         score_train, score_val = accuracy_score(Y_train.squeeze(), preds_train), accuracy_score(Y_val.squeeze(), preds_val)
-            #         if score_val > best_params_km_rbf['score']:
-            #             best_params_km_rbf['C'] = C
-            #             best_params_km_rbf['gamma'] = gamma
-            #             best_params_km_rbf['score'] = score_val
-            #         add_log(f'[{curr_count}/{total_count}]\tC:{C}, gamma:{gamma}, train score:{score_train}, val score:{score_val}')
-            # add_log(f'\nBest validation accuracy: {best_params_km_rbf["score"]}, for C = {best_params_km_rbf["C"]}, gamma = {best_params_km_rbf["gamma"]}')
             model_base = SVC(kernel='rbf', max_iter=int(1e4))
             scorer = make_scorer(accuracy_score)
-            model_cv = GridSearchCV(estimator=model_base, param_grid=params_km_rbf, scoring=scorer, n_jobs=4, refit=False, cv=4)
+            model_cv = GridSearchCV(estimator=model_base, param_grid=params_km_rbf, scoring=scorer, n_jobs=4, refit=False, cv=4, verbose=3)
             model_cv.fit(X_train, Y_train.squeeze())
-            best_model_km_rbf['C'] = model_cv.best_params_['C']
-            best_model_km_rbf['gamma'] = model_cv.best_params_['gamma']
+            best_params_km_rbf['C'] = model_cv.best_params_['C']
+            best_params_km_rbf['gamma'] = model_cv.best_params_['gamma']
+            add_log(f'Best params for RBF: C = {best_params_km_rbf["C"]}, gamma = {best_params_km_rbf["gamma"]}')
 
         best_model_km_rbf = SVC(C=best_params_km_rbf['C'], kernel='rbf', gamma=best_params_km_rbf['gamma'], probability=True)
         best_model_km_rbf.fit(X_train, Y_train.squeeze())
@@ -333,25 +318,12 @@ for run in range(RUNS):
             rad_probas_km_rbf[i][run] = proba_radial
 
         if best_params_km_lin['C'] is None:
-            # total_count = len(params_km_lin['Cs'])
-            # curr_count = 0
-            # add_log(f'Cross-validation across {total_count} models.\n')
-            # for C in params_km_lin['Cs']:
-            #     curr_count += 1
-            #     model = SVC(C=C, kernel='linear', max_iter=int(1e4))
-            #     model.fit(X_train, Y_train.squeeze())
-            #     preds_train, preds_val = model.predict(X_train), model.predict(X_val)
-            #     score_train, score_val = accuracy_score(Y_train.squeeze(), preds_train), accuracy_score(Y_val.squeeze(), preds_val)
-            #     if score_val > best_params_km_lin['score']:
-            #         best_params_km_lin['C'] = C
-            #         best_params_km_lin['score'] = score_val
-            #     add_log(f'[{curr_count}/{total_count}]\tC:{C}, train score:{score_train}, val score:{score_val}')
-            # add_log(f'\nBest validation accuracy: {best_params_km_lin["score"]}, for C = {best_params_km_lin["C"]}')
             model_base = SVC(kernel='linear', max_iter=int(1e4))
             scorer = make_scorer(accuracy_score)
-            model_cv = GridSearchCV(estimator=model_base, param_grid=params_km_lin, scoring=scorer, n_jobs=4, refit=False, cv=4)
+            model_cv = GridSearchCV(estimator=model_base, param_grid=params_km_lin, scoring=scorer, n_jobs=4, refit=False, cv=4, verbose=3)
             model_cv.fit(X_train, Y_train.squeeze())
-            best_model_km_lin['C'] = model_cv.best_params_['C']
+            best_params_km_lin['C'] = model_cv.best_params_['C']
+            add_log(f'Best params for linear: C = {best_params_km_lin["C"]}')
 
         best_model_km_lin = SVC(C=best_params_km_lin['C'], kernel='linear', probability=True)
         best_model_km_lin.fit(X_train, Y_train.squeeze())
