@@ -363,13 +363,13 @@ empty_orthant_scores_km_ntk = [orthant_scores_km_ntk[i][ZERO_ORTHANT_INDEX] for 
 add_log(f'Full orthant scores for ntk: {full_orthant_scores_km_ntk}')
 add_log(f'Empty orthant scores for ntk: {empty_orthant_scores_km_ntk}')
 
-if orthant_scores_km_rbf[0][0] is not None:
+if args.pure:
     full_orthant_scores_km_rbf = [(np.sum(orthant_scores_km_rbf[i]) - orthant_scores_km_rbf[i][ZERO_ORTHANT_INDEX])/127 for i in range(RUNS)]
     empty_orthant_scores_km_rbf = [orthant_scores_km_rbf[i][ZERO_ORTHANT_INDEX] for i in range(RUNS)]
     add_log(f'Full orthant scores for rbf: {full_orthant_scores_km_rbf}')
     add_log(f'Empty orthant scores for rbf: {empty_orthant_scores_km_rbf}')
 
-if orthant_scores_km_lin[0][0] is not None:
+if args.pure:
     full_orthant_scores_km_lin = [(np.sum(orthant_scores_km_lin[i]) - orthant_scores_km_lin[i][ZERO_ORTHANT_INDEX])/127 for i in range(RUNS)]
     empty_orthant_scores_km_lin = [orthant_scores_km_lin[i][ZERO_ORTHANT_INDEX] for i in range(RUNS)]
     add_log(f'Full orthant scores for lin: {full_orthant_scores_km_lin}')
@@ -415,7 +415,7 @@ plt.ylabel('Binary accuracy')
 plt.title('NTK SVM')
 plt.savefig(plot_path_str+'acc_vs_orthant_ntk.png')
 
-if orthant_scores_km_rbf[0] is not None:
+if args.pure:
     avg_scores_km_rbf = np.mean(np.array(orthant_scores_km_rbf), axis=0)
     plt.figure(figsize=(6, 6))
     plt.scatter(orthant_counts, avg_scores_km_rbf)
@@ -435,7 +435,7 @@ if orthant_scores_km_rbf[0] is not None:
     plt.title('RBF SVM')
     plt.savefig(plot_path_str+'acc_vs_orthant_rbf.png')
 
-if orthant_scores_km_lin[0] is not None:
+if args.pure:
     avg_scores_km_lin = np.mean(np.array(orthant_scores_km_lin), axis=0)
     plt.figure(figsize=(6, 6))
     plt.scatter(orthant_counts, avg_scores_km_lin)
@@ -475,7 +475,7 @@ for i in range(3):
 plt.suptitle('Average predicted probability of class 1 vs radius, NTK')
 plt.savefig(plot_path_str+'rad_dec_bound_ntk.png')
 
-if orthant_scores_km_rbf[0] is not None:
+if args.pure:
     plt.figure(figsize=(20, 6))
     for i in range(3):
         plt.subplot(1, 3, i+1)
@@ -486,7 +486,7 @@ if orthant_scores_km_rbf[0] is not None:
     plt.suptitle('Average predicted probability of class 1 vs radius, RBF')
     plt.savefig(plot_path_str+'rad_dec_bound_rbf.png')
 
-if orthant_scores_km_lin[0] is not None:
+if args.pure:
     plt.figure(figsize=(20, 6))
     for i in range(3):
         plt.subplot(1, 3, i+1)
