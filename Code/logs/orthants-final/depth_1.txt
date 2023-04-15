@@ -1,0 +1,71 @@
+Empty orthant is orthant number 2
+Orthants neighboring the empty orthant are: [0, 3, 6, 10, 18, 34, 66]
+
+****************************************************************************************************
+Run number 0
+Average accuracy across all orthants: 0.9353906512260437
+Accuracy in empty orthant: 0.5199999809265137
+Average accuracy across all orthants: 0.8760156250000001
+Accuracy in empty orthant: 0.525
+Average accuracy across all orthants: 0.99609375
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.5
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Run number 1
+Average accuracy across all orthants: 0.9189453125
+Accuracy in empty orthant: 0.9200000166893005
+Average accuracy across all orthants: 0.87578125
+Accuracy in empty orthant: 0.89
+Average accuracy across all orthants: 0.99609375
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.5
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Run number 2
+Average accuracy across all orthants: 0.9215234518051147
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.86140625
+Accuracy in empty orthant: 0.51
+Average accuracy across all orthants: 0.99609375
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.5
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Run number 3
+Average accuracy across all orthants: 0.9321485161781311
+Accuracy in empty orthant: 0.8450000286102295
+Average accuracy across all orthants: 0.8905468750000001
+Accuracy in empty orthant: 0.74
+Average accuracy across all orthants: 0.99609375
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.5
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Run number 4
+Average accuracy across all orthants: 0.9514453411102295
+Accuracy in empty orthant: 0.9200000166893005
+Average accuracy across all orthants: 0.8683984375
+Accuracy in empty orthant: 0.86
+Average accuracy across all orthants: 0.99609375
+Accuracy in empty orthant: 0.5
+Average accuracy across all orthants: 0.5
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Full orthant scores for nn: [0.9386615302619032, 0.9189370222917692, 0.9248425341027928, 0.932834655281127, 0.9516929566390872]
+Empty orthant scores for nn: [0.52, 0.92, 0.5, 0.845, 0.92]
+Full orthant scores for ntk: [0.8787795275590552, 0.8756692913385826, 0.8641732283464567, 0.891732283464567, 0.8684645669291339]
+Empty orthant scores for ntk: [0.525, 0.89, 0.51, 0.74, 0.86]
+Full orthant scores for rbf: [1.0, 1.0, 1.0, 1.0, 1.0]
+Empty orthant scores for rbf: [0.5, 0.5, 0.5, 0.5, 0.5]
+Full orthant scores for lin: [0.5, 0.5, 0.5, 0.5, 0.5]
+Empty orthant scores for lin: [0.5, 0.5, 0.5, 0.5, 0.5]
+Initial match fractions for class 0: [0.0, 0.0, 0.0, 0.0, 0.0]
+Final match fractions for class 0: [0.0, 0.0, 0.0, 0.0, 0.0]
+Initial match fractions for class 1: [1.0, 1.0, 1.0, 1.0, 1.0]
+Final match fractions for class 1: [1.0, 1.0, 1.0, 1.0, 1.0]

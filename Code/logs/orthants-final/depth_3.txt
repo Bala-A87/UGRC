@@ -1,0 +1,155 @@
+Empty orthant is orthant number 40
+Orthants neighboring the empty orthant are: [8, 32, 41, 42, 44, 56, 104]
+
+****************************************************************************************************
+Run number 0
+Cross-validating across 90 models.
+
+[1/90] Width: 32, lr: 0.0001, lambda: 0.0001 ==> score: 0.510286
+[2/90] Width: 32, lr: 0.0001, lambda: 0.001 ==> score: 0.508320
+[3/90] Width: 32, lr: 0.0001, lambda: 0.01 ==> score: 0.501310
+[4/90] Width: 32, lr: 0.0001, lambda: 0.1 ==> score: 0.501507
+[5/90] Width: 32, lr: 0.0001, lambda: 1.0 ==> score: 0.498493
+[6/90] Width: 32, lr: 0.0001, lambda: 10.0 ==> score: 0.498428
+[7/90] Width: 32, lr: 0.0001, lambda: 100.0 ==> score: 0.498428
+[8/90] Width: 32, lr: 0.0001, lambda: 1000.0 ==> score: 0.498690
+[9/90] Width: 32, lr: 0.0001, lambda: 10000.0 ==> score: 0.501769
+[10/90] Width: 32, lr: 0.0001, lambda: 0.0 ==> score: 0.518016
+[11/90] Width: 32, lr: 0.001, lambda: 0.0001 ==> score: 0.612749
+[12/90] Width: 32, lr: 0.001, lambda: 0.001 ==> score: 0.504651
+[13/90] Width: 32, lr: 0.001, lambda: 0.01 ==> score: 0.498559
+[14/90] Width: 32, lr: 0.001, lambda: 0.1 ==> score: 0.498297
+[15/90] Width: 32, lr: 0.001, lambda: 1.0 ==> score: 0.501572
+[16/90] Width: 32, lr: 0.001, lambda: 10.0 ==> score: 0.498493
+[17/90] Width: 32, lr: 0.001, lambda: 100.0 ==> score: 0.501441
+[18/90] Width: 32, lr: 0.001, lambda: 1000.0 ==> score: 0.501507
+[19/90] Width: 32, lr: 0.001, lambda: 10000.0 ==> score: 0.498624
+[20/90] Width: 32, lr: 0.001, lambda: 0.0 ==> score: 0.585102
+[21/90] Width: 32, lr: 0.01, lambda: 0.0001 ==> score: 0.501834
+[22/90] Width: 32, lr: 0.01, lambda: 0.001 ==> score: 0.501507
+[23/90] Width: 32, lr: 0.01, lambda: 0.01 ==> score: 0.501572
+[24/90] Width: 32, lr: 0.01, lambda: 0.1 ==> score: 0.501376
+[25/90] Width: 32, lr: 0.01, lambda: 1.0 ==> score: 0.498362
+[26/90] Width: 32, lr: 0.01, lambda: 10.0 ==> score: 0.501572
+[27/90] Width: 32, lr: 0.01, lambda: 100.0 ==> score: 0.498297
+[28/90] Width: 32, lr: 0.01, lambda: 1000.0 ==> score: 0.501507
+[29/90] Width: 32, lr: 0.01, lambda: 10000.0 ==> score: 0.498428
+[30/90] Width: 32, lr: 0.01, lambda: 0.0 ==> score: 0.498297
+[31/90] Width: 64, lr: 0.0001, lambda: 0.0001 ==> score: 0.532233
+[32/90] Width: 64, lr: 0.0001, lambda: 0.001 ==> score: 0.505634
+[33/90] Width: 64, lr: 0.0001, lambda: 0.01 ==> score: 0.498559
+[34/90] Width: 64, lr: 0.0001, lambda: 0.1 ==> score: 0.501441
+[35/90] Width: 64, lr: 0.0001, lambda: 1.0 ==> score: 0.501769
+[36/90] Width: 64, lr: 0.0001, lambda: 10.0 ==> score: 0.501441
+[37/90] Width: 64, lr: 0.0001, lambda: 100.0 ==> score: 0.498297
+[38/90] Width: 64, lr: 0.0001, lambda: 1000.0 ==> score: 0.498362
+[39/90] Width: 64, lr: 0.0001, lambda: 10000.0 ==> score: 0.501638
+[40/90] Width: 64, lr: 0.0001, lambda: 0.0 ==> score: 0.533805
+[41/90] Width: 64, lr: 0.001, lambda: 0.0001 ==> score: 0.532233
+[42/90] Width: 64, lr: 0.001, lambda: 0.001 ==> score: 0.498624
+[43/90] Width: 64, lr: 0.001, lambda: 0.01 ==> score: 0.498559
+[44/90] Width: 64, lr: 0.001, lambda: 0.1 ==> score: 0.501507
+[45/90] Width: 64, lr: 0.001, lambda: 1.0 ==> score: 0.498362
+[46/90] Width: 64, lr: 0.001, lambda: 10.0 ==> score: 0.501572
+[47/90] Width: 64, lr: 0.001, lambda: 100.0 ==> score: 0.498428
+[48/90] Width: 64, lr: 0.001, lambda: 1000.0 ==> score: 0.501638
+[49/90] Width: 64, lr: 0.001, lambda: 10000.0 ==> score: 0.501310
+[50/90] Width: 64, lr: 0.001, lambda: 0.0 ==> score: 0.637317
+[51/90] Width: 64, lr: 0.01, lambda: 0.0001 ==> score: 0.498428
+[52/90] Width: 64, lr: 0.01, lambda: 0.001 ==> score: 0.501900
+[53/90] Width: 64, lr: 0.01, lambda: 0.01 ==> score: 0.501703
+[54/90] Width: 64, lr: 0.01, lambda: 0.1 ==> score: 0.498559
+[55/90] Width: 64, lr: 0.01, lambda: 1.0 ==> score: 0.498362
+[56/90] Width: 64, lr: 0.01, lambda: 10.0 ==> score: 0.501638
+[57/90] Width: 64, lr: 0.01, lambda: 100.0 ==> score: 0.501572
+[58/90] Width: 64, lr: 0.01, lambda: 1000.0 ==> score: 0.498297
+[59/90] Width: 64, lr: 0.01, lambda: 10000.0 ==> score: 0.501441
+[60/90] Width: 64, lr: 0.01, lambda: 0.0 ==> score: 0.498297
+[61/90] Width: 128, lr: 0.0001, lambda: 0.0001 ==> score: 0.562697
+[62/90] Width: 128, lr: 0.0001, lambda: 0.001 ==> score: 0.504717
+[63/90] Width: 128, lr: 0.0001, lambda: 0.01 ==> score: 0.498624
+[64/90] Width: 128, lr: 0.0001, lambda: 0.1 ==> score: 0.501638
+[65/90] Width: 128, lr: 0.0001, lambda: 1.0 ==> score: 0.501638
+[66/90] Width: 128, lr: 0.0001, lambda: 10.0 ==> score: 0.501703
+[67/90] Width: 128, lr: 0.0001, lambda: 100.0 ==> score: 0.498428
+[68/90] Width: 128, lr: 0.0001, lambda: 1000.0 ==> score: 0.498231
+[69/90] Width: 128, lr: 0.0001, lambda: 10000.0 ==> score: 0.501507
+[70/90] Width: 128, lr: 0.0001, lambda: 0.0 ==> score: 0.568920
+[71/90] Width: 128, lr: 0.001, lambda: 0.0001 ==> score: 0.498755
+[72/90] Width: 128, lr: 0.001, lambda: 0.001 ==> score: 0.498493
+[73/90] Width: 128, lr: 0.001, lambda: 0.01 ==> score: 0.498624
+[74/90] Width: 128, lr: 0.001, lambda: 0.1 ==> score: 0.501572
+[75/90] Width: 128, lr: 0.001, lambda: 1.0 ==> score: 0.498624
+[76/90] Width: 128, lr: 0.001, lambda: 10.0 ==> score: 0.501507
+[77/90] Width: 128, lr: 0.001, lambda: 100.0 ==> score: 0.498493
+[78/90] Width: 128, lr: 0.001, lambda: 1000.0 ==> score: 0.498559
+[79/90] Width: 128, lr: 0.001, lambda: 10000.0 ==> score: 0.501769
+[80/90] Width: 128, lr: 0.001, lambda: 0.0 ==> score: 0.499476
+[81/90] Width: 128, lr: 0.01, lambda: 0.0001 ==> score: 0.501572
+[82/90] Width: 128, lr: 0.01, lambda: 0.001 ==> score: 0.498559
+[83/90] Width: 128, lr: 0.01, lambda: 0.01 ==> score: 0.501638
+[84/90] Width: 128, lr: 0.01, lambda: 0.1 ==> score: 0.498231
+[85/90] Width: 128, lr: 0.01, lambda: 1.0 ==> score: 0.498100
+[86/90] Width: 128, lr: 0.01, lambda: 10.0 ==> score: 0.501572
+[87/90] Width: 128, lr: 0.01, lambda: 100.0 ==> score: 0.501638
+[88/90] Width: 128, lr: 0.01, lambda: 1000.0 ==> score: 0.498166
+[89/90] Width: 128, lr: 0.01, lambda: 10000.0 ==> score: 0.501572
+[90/90] Width: 128, lr: 0.01, lambda: 0.0 ==> score: 0.501703
+
+Best validation score after 10 epochs: 0.637317
+Best configuration: width: 64, lr: 0.001, lambda: 0.0
+Average accuracy across all orthants: 0.998242199420929
+Accuracy in empty orthant: 0.9850000143051147
+Cross-validation across 9 models.
+
+[1/9]	C:0.0001, train score:0.5082185039370078, val score:0.5045275590551181
+[2/9]	C:0.001, train score:0.5506889763779528, val score:0.5505905511811023
+[3/9]	C:0.01, train score:0.5682086614173228, val score:0.5659448818897638
+[4/9]	C:0.1, train score:0.5659940944881889, val score:0.5631889763779527
+[5/9]	C:1.0, train score:0.5799212598425196, val score:0.5753937007874016
+[6/9]	C:10.0, train score:0.6020669291338583, val score:0.5964566929133859
+[7/9]	C:100.0, train score:0.6374507874015748, val score:0.6322834645669292
+[8/9]	C:1000.0, train score:0.5682086614173228, val score:0.5606299212598426
+[9/9]	C:10000.0, train score:0.5608267716535433, val score:0.555511811023622
+
+Best validation accuracy: 0.6322834645669292, for C = 100.0
+Average accuracy across all orthants: 0.628359375
+Accuracy in empty orthant: 0.55
+
+****************************************************************************************************
+Run number 1
+Average accuracy across all orthants: 0.9558593034744263
+Accuracy in empty orthant: 0.5299999713897705
+Average accuracy across all orthants: 0.8532031250000001
+Accuracy in empty orthant: 0.5
+
+****************************************************************************************************
+Run number 2
+Average accuracy across all orthants: 0.9701172113418579
+Accuracy in empty orthant: 0.8849999904632568
+Average accuracy across all orthants: 0.8057421874999999
+Accuracy in empty orthant: 0.775
+
+****************************************************************************************************
+Run number 3
+Average accuracy across all orthants: 0.9633593559265137
+Accuracy in empty orthant: 0.8899999856948853
+Average accuracy across all orthants: 0.7106640625
+Accuracy in empty orthant: 0.9
+
+****************************************************************************************************
+Run number 4
+Average accuracy across all orthants: 0.9935546517372131
+Accuracy in empty orthant: 0.8550000190734863
+Average accuracy across all orthants: 0.6508984375
+Accuracy in empty orthant: 0.785
+
+****************************************************************************************************
+Full orthant scores for nn: [0.9983464038278175, 0.9592126560962106, 0.9707874087836799, 0.9639371136042076, 0.9946455467404343]
+Empty orthant scores for nn: [0.985, 0.53, 0.885, 0.89, 0.855]
+Full orthant scores for ntk: [0.628976377952756, 0.855984251968504, 0.8059842519685039, 0.7091732283464567, 0.6498425196850394]
+Empty orthant scores for ntk: [0.55, 0.5, 0.775, 0.9, 0.785]
+Initial match fractions for class 0: [0.16, 0.0, 0.0, 0.0, 0.0]
+Final match fractions for class 0: [1.0, 0.25, 0.89, 0.87, 0.98]
+Initial match fractions for class 1: [0.96, 1.0, 1.0, 0.99, 1.0]
+Final match fractions for class 1: [0.89, 0.97, 0.77, 0.89, 0.88]
