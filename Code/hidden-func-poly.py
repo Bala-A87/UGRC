@@ -91,7 +91,7 @@ class SimpleNN(nn.Module):
         return self.output(self.input(x))
     
     def clone(self):
-        new_model = SimpleNN(self.width, self.activation)
+        new_model = SimpleNN(self.width)
         new_model.load_state_dict(self.state_dict())
         return new_model
 
@@ -201,12 +201,12 @@ if best_width is None:
                 curr_count += 1
                 torch.random.manual_seed(47647)
                 model = SimpleNN(width).to(device)
-                optimizer = torch.optim.SGD(params=model.parameters(), lr=eta, weight_decay=weight_decay)
+                optimizer = torch.optim.Adadelta(params=model.parameters(), lr=eta, weight_decay=weight_decay)
                 history = train_model(
                     model=model,
                     train_dataloader=train_dataloader,
                     val_dataloader=val_dataloader,
-                    loss_fn=torch.nn.MSELoss(),
+                    loss_fn=torch.nn.L1Loss(),
                     optimizer=optimizer,
                     metric=NegMeanSquaredError(),
                     epochs=EPOCHS,
@@ -236,8 +236,8 @@ torch.random.manual_seed(47647)
 best_model_nn = SimpleNN(best_width).to(device)
 model_0 = best_model_nn.clone()
 
-loss_fn = torch.nn.MSELoss()
-optimizer = torch.optim.SGD(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
+loss_fn = torch.nn.L1Loss()
+optimizer = torch.optim.Adadelta(params=best_model_nn.parameters(), lr=best_eta, weight_decay=best_weight_decay)
 metric = NegMeanSquaredError()
 early_stop = EarlyStopping(patience=50, min_delta=1e-4)
 
