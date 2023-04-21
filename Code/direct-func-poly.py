@@ -57,6 +57,7 @@ def add_log(log_str: str, file_name: Path = log_path) -> None:
 
 DATA_SIZE = 10000
 RANGE = 2
+Y_LIM = (-1, 1)
 
 class SimpleNN(nn.Module):
     def __init__(self, width) -> None:
@@ -97,7 +98,7 @@ add_log(f'X_train.shape == {X_train.shape}, Y_train.shape == {Y_train.shape}')
 add_log(f'X_val.shape == {X_val.shape}, Y_val.shape == {Y_val.shape}')
 add_log(f'X_test.shape == {X_test.shape}, Y_test.shape == {Y_test.shape}')
 
-Y_LIM = (Y_train.min(), Y_train.max())
+# Y_LIM = (Y_train.min(), Y_train.max())
 # plt.scatter(X_train.sum(dim=1), Y_train)
 # plt.xlim(-RANGE, RANGE)
 # plt.ylim(Y_LIM)
