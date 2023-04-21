@@ -17,11 +17,12 @@ The goal of the project is to analyze the ability of neural networks to learn us
     - [Notebook 2](./Code/alignment.ipynb): Comparing learning hidden representations to the silent alignment effect
     - [Script 1](./Code/hidden-function.py): Cross-validation and plot generation with cosine transformed data
     - **[Script 2](./Code/hidden-func-poly.py)**: Cross-validation and plot generation with polynomial data
-    - **[Script 3](./Code/hidden-function-align.py)**: Plot generation for alignment comparison
+    - **[Script 3](./Code/direct-func-poly.py)**: Cross-validation and plot generation with 1-d polynomial data
+    - **[Script 4](./Code/hidden-function-align.py)**: Plot generation for alignment comparison
 
 ## Repository structure
 
 The proposal, report and presentation (may be added later) are present at the top level, along with the Code folder which contains all relevant details, code and supporting material for all experiments, as follows:
 - [scripts](./Code/scripts/) contains the helper scripts with modularized code that is used frequently, grouped into files such as ntk, train, utils, etc.
-- [animations](./Code/animations/), [logs](./Code/logs/), [configs](./Code/configs/), [models](./Code/models/) and [plots](./Code/plots/) contain supporting material saved during runtime for ease of making observations and their permanence for later use.
+- [animations](./Code/animations/), [logs](./Code/logs/), [configs](./Code/configs/), and [plots](./Code/plots/) contain supporting material saved during runtime for ease of making observations and their permanence for later use.
 - Notebooks and scripts used for running experiments are present as such in [Code](./Code/).
